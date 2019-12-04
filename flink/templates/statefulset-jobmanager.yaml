@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "flink.fullname" . }}-jobmanager
+  labels:
+{{ include "flink.labels" . | indent 4 }}
+    component: jobmanager
+  annotations:
+    "cluster-autoscaler.kubernetes.io/safe-to-evict": "false"
+spec:
+  replicas: {{ .Values.jobmanager.replicaCount }}
+  podManagementPolicy: Parallel
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "flink.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+      component: jobmanager
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "flink.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        component: jobmanager
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+        - name: jobmanager
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          workingDir: {{ .Values.flink.workDir }}
+          command:
+          {{- range .Values.jobmanager.command }}
+            - {{ . | quote }}
+          {{- end }}
+          env:
+          # Redis access
+            - name: REDIS_HOST
+              value: {{ .Release.Namespace }}-redis-master
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Namespace }}-redis
+                  key: redis-password
+          #
+          {{- range $key, $value := .Values.jobmanager.extraEnvs }}
+            - name: {{ $key }}
+              value: {{ $value }}
+          {{- end }}
+          {{- range $key, $value := .Values.extraEnvs }}
+            - name: {{ $key }}
+              value: {{ $value }}
+          {{- end }}
+          ports:
+          {{- range $name, $port := .Values.jobmanager.ports }}
+            - containerPort: {{ $port }}
+              name: {{ $name }}
+          {{- end }}
+          livenessProbe:
+            tcpSocket:
+              port: {{ .Values.jobmanager.ports.rpc }}
+            initialDelaySeconds: 30
+            periodSeconds: 60
+          volumeMounts:
+            - name: flink-config-volume
+              mountPath: {{ .Values.flink.workDir }}/conf
+          resources:
+            {{- toYaml .Values.jobmanager.resources | nindent 12 }}
+
+      volumes:
+        - name: flink-config-volume
+          configMap:
+            name: {{ include "flink.fullname" . }}-config
+            items:
+              - key: flink-conf.yaml
+                path: flink-conf.yaml
+              - key: log4j.properties
+                path: log4j.properties
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

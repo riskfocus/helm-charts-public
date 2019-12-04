@@ -1,0 +1,111 @@
+# Default values for flink.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: flink
+  tag: 1.9.1-scala_2.12
+  pullPolicy: IfNotPresent
+imagePullSecrets: []
+
+flink:
+  monitoring:
+    enabled: true
+    latency:
+      enabled: false
+      probingInterval: 1000
+    system:
+      enabled: true
+      probingInterval: 5000
+  workDir: /opt/flink
+
+extraEnvs: {}
+
+jobmanager:
+  extraEnvs: {}
+  ports:
+    rpc: 6123
+    blob: 6124
+    ui: 8081
+    metrics: 9999
+  replicaCount: 1
+  # g for Gigabytes, m for Megabytes
+  heapSize: 6g
+  resources:
+    limits:
+      cpu: 3800m
+      # Gi for Gigabytes, Mi for Megabytes
+      memory: 8000Mi
+  command: ["/bin/bash", "-c", "wget \
+  https://repo1.maven.org/maven2/org/apache/flink/flink-metrics-prometheus_2.12/1.9.1/flink-metrics-prometheus_2.12-1.9.1.jar \
+  -O /opt/flink/lib/flink-metrics-prometheus_2.12-1.9.1.jar && \
+  wget https://repo1.maven.org/maven2/com/github/oshi/oshi-core/3.4.0/oshi-core-3.4.0.jar \
+  -O /opt/flink/lib/oshi-core-3.4.0.jar && \
+  wget https://repo1.maven.org/maven2/net/java/dev/jna/jna/5.4.0/jna-5.4.0.jar \
+  -O /opt/flink/lib/jna-5.4.0.jar && \
+  wget https://repo1.maven.org/maven2/net/java/dev/jna/jna-platform/5.4.0/jna-platform-5.4.0.jar \
+  -O /opt/flink/lib/jna-platform-5.4.0.jar && \
+  $FLINK_HOME/bin/jobmanager.sh start;\
+      while :;
+      do
+        if [[ -f $(find log -name '*jobmanager*.log' -print -quit) ]];
+          then tail -f -n +1 log/*jobmanager*.log;
+        fi;
+      done"]
+  service:
+    type: ClusterIP
+    annotations: {}
+  rest:
+    enabled: true
+
+taskmanager:
+  extraEnvs: {}
+  ports:
+    rpc: 6122
+    metrics: 9999
+  replicaCount: 4
+  numberOfTaskSlots: 9
+  # g for Gigabytes, m for Megabytes
+  heapSize: 6g
+  resources:
+    limits:
+      cpu: 3800m
+      # Gi for Gigabytes, Mi for Megabytes
+      memory: 8000Mi
+  command: ["/bin/bash", "-c", "wget \
+  https://repo1.maven.org/maven2/org/apache/flink/flink-metrics-prometheus_2.12/1.9.1/flink-metrics-prometheus_2.12-1.9.1.jar \
+  -O /opt/flink/lib/flink-metrics-prometheus_2.12-1.9.1.jar && \
+  wget https://repo1.maven.org/maven2/com/github/oshi/oshi-core/3.4.0/oshi-core-3.4.0.jar \
+  -O /opt/flink/lib/oshi-core-3.4.0.jar && \
+  wget https://repo1.maven.org/maven2/net/java/dev/jna/jna/5.4.0/jna-5.4.0.jar \
+  -O /opt/flink/lib/jna-5.4.0.jar && \
+  wget https://repo1.maven.org/maven2/net/java/dev/jna/jna-platform/5.4.0/jna-platform-5.4.0.jar \
+  -O /opt/flink/lib/jna-platform-5.4.0.jar && \
+  $FLINK_HOME/bin/taskmanager.sh start; \
+      while :;
+      do
+        if [[ -f $(find log -name '*taskmanager*.log' -print -quit) ]];
+          then tail -f -n +1 log/*taskmanager*.log;
+        fi;
+      done"]
+  service:
+    type: ClusterIP
+
+ingress:
+  enabled: false
+  annotations: {}
+  path: /
+  hosts: []
+  tls: []
+
+nodeSelector: {}
+
+tolerations:
+  - key: instance
+    operator: Exists
+    effect: NoSchedule
+
+affinity: {}

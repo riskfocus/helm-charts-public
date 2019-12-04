@@ -1,0 +1,49 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: 'flink-jobmanager'
+  labels:
+{{ include "flink.labels" . | indent 4 }}
+    app: prometheus
+    prometheusApp: prometheus-local
+spec:
+  endpoints:
+    - interval: 5s
+      path: /
+      port: metrics
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  targetLabels:
+    - app.kubernetes.io/name
+    - component
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: flink
+      component: jobmanager
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: 'flink-taskmanager'
+  labels:
+{{ include "flink.labels" . | indent 4 }}
+    app: prometheus
+    prometheusApp: prometheus-local
+spec:
+  endpoints:
+    - interval: 5s
+      path: /
+      port: metrics
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  targetLabels:
+    - app.kubernetes.io/name
+    - component
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: flink
+      component: taskmanager
