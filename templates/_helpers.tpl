@@ -43,3 +43,29 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
+
+{{/*
+Check if specific namespace is passed if false
+then .Release.Namespace will be used
+*/}}
+{{- define "serviceMonitor.namespace" -}}
+{{- if .Values.prometheus.serviceMonitor.namespace -}}
+{{ .Values.prometheus.serviceMonitor.namespace }}
+{{- else -}}
+{{ .Release.Namespace }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+ServiceAccount for Jobmanager
+*/}}
+{{- define "jobmanager.serviceAccount" -}}
+{{ default "jobmanager" .Values.jobmanager.serviceAccount.name }}
+{{- end -}}
+
+{{/*
+ServiceAccount for Taskmanager
+*/}}
+{{- define "taskmanager.serviceAccount" -}}
+{{ default "taskmanager" .Values.taskmanager.serviceAccount.name }}
+{{- end -}}

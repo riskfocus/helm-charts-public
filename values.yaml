@@ -1,0 +1,219 @@
+# Default values for flink.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: flink
+  tag: 1.9.1-scala_2.12
+  pullPolicy: IfNotPresent
+imagePullSecrets: []
+
+# For general configuration
+flink:
+  # monitoring is exporting metrics in Prometheus format
+  monitoring:
+    enabled: true
+    # port for metrics
+    port: 9999
+    # latency monitoring
+    latency:
+      enabled: false
+      probingInterval: 1000
+    # system is additional system metrics
+    system:
+      enabled: true
+      probingInterval: 5000
+  workDir: /opt/flink
+  state:
+    # backend for state. Available options: filesystem, rocksdb, memory; empty - for default(memory)
+    backend:
+    # These values are default excludes file pathes
+    # https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/state/checkpointing.html#related-config-options
+    params: |+
+      state.checkpoints.dir: file:///flink_state/checkpoints
+      state.savepoints.dir: file:///flink_state/savepoints
+      state.backend.async: true
+      state.backend.fs.memory-threshold: 1024
+      state.backend.fs.write-buffer-size: 4096
+      state.backend.incremental: false
+      state.backend.local-recovery: false
+      state.checkpoints.num-retained: 1
+      taskmanager.state.local.root-dirs: file:///flink_state/local-recovery
+    # https://ci.apache.org/projects/flink/flink-docs-stable/ops/state/state_backends.html#rocksdb-state-backend-config-options
+    # * state.backend.rocksdb.localdir doesn't have a prefix - file://
+    rocksdb: |+
+      state.backend.rocksdb.checkpoint.transfer.thread.num: 1
+      state.backend.rocksdb.localdir: /flink_state/rocksdb
+      state.backend.rocksdb.options-factory: org.apache.flink.contrib.streaming.state.DefaultConfigurableOptionsFactory
+      state.backend.rocksdb.predefined-options: DEFAULT
+      state.backend.rocksdb.timer-service.factory: HEAP
+      state.backend.rocksdb.ttl.compaction.filter.enabled: false
+
+# extraEnvs passes envs to both Jobmanagers and Taskmanager
+# for example
+# extraEnvs:
+#  - name: KAFKA_BOOTSTRAP_SERVERS
+#    value: dest-kafka-bootstrap:9092
+#
+extraEnvs: []
+
+jobmanager:
+  # highAvailability configuration based on zookeeper
+  highAvailability:
+    # enabled also will enable zookeeper Dependency
+    enabled: false
+    zookeeperConnect: zookeeper:2181
+    # storageDir for Jobmanagers. DFS expected.
+    # Docs - Storage directory (required): JobManager metadata is persisted in the file system storageDir and only a pointer to this state is stored in ZooKeeper
+    storageDir:
+  # extraEnvs passes envs to Jobmanagers
+  extraEnvs: []
+  ports:
+    rpc: 6123
+    blob: 6124
+    ui: 8081
+  replicaCount: 1
+  # heapSize params for Jobmanager
+  # keep in mind that Flink can use offheap memory
+  # e.g. in case of checkpoint usage
+  heapSize: 1g
+  resources: {}
+# Example
+#    limits:
+#      cpu: 3800m
+#      memory: 8000Mi
+  command: ["/bin/bash", "-c", "cp \
+  /opt/flink/opt/flink-metrics-prometheus-1.9.1.jar \
+  /opt/flink/opt/flink-s3-fs-hadoop-1.9.1.jar \
+  /opt/flink/lib/ && \
+  wget https://repo1.maven.org/maven2/com/github/oshi/oshi-core/3.4.0/oshi-core-3.4.0.jar \
+  -O /opt/flink/lib/oshi-core-3.4.0.jar && \
+  wget https://repo1.maven.org/maven2/net/java/dev/jna/jna/5.4.0/jna-5.4.0.jar \
+  -O /opt/flink/lib/jna-5.4.0.jar && \
+  wget https://repo1.maven.org/maven2/net/java/dev/jna/jna-platform/5.4.0/jna-platform-5.4.0.jar \
+  -O /opt/flink/lib/jna-platform-5.4.0.jar && \
+  $FLINK_HOME/bin/jobmanager.sh start;\
+      while :;
+      do
+        if [[ -f $(find log -name '*jobmanager*.log' -print -quit) ]];
+          then tail -f -n +1 log/*jobmanager*.log;
+        fi;
+      done"]
+  service:
+    type: ClusterIP
+    annotations: {}
+    # rest is additional service which exposes only HTTP port
+    # can be using for cases of using exposeController
+    rest:
+      enabled: true
+      annotations: {}
+    headless:
+      annotations: {}
+  nodeSelector: {}
+  affinity: {}
+  tolerations: {}
+  persistent:
+    enabled: false
+    storageClass:
+    size: 8Gi
+    mountPath: "/flink_state"
+  podManagementPolicy: Parallel
+  annotations: {}
+  # Example
+  #  "cluster-autoscaler.kubernetes.io/safe-to-evict": "false"
+  serviceAccount:
+    # Specifies whether a ServiceAccount should be created
+    create: true
+    # The name of the ServiceAccount to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name:
+  #livenessProbe will conduct checks for rpc port as tcpSocket probe
+  livenessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 60
+
+taskmanager:
+  # extraEnvs passes envs to Taskmanagers
+  extraEnvs: []
+  ports:
+    rpc: 6122
+  replicaCount: 4
+  numberOfTaskSlots: 1
+  heapSize: 1g
+  resources: {}
+# Example
+#    limits:
+#      cpu: 3800m
+#      memory: 8000Mi
+  command: ["/bin/bash", "-c", "cp \
+  /opt/flink/opt/flink-metrics-prometheus-1.9.1.jar \
+  /opt/flink/opt/flink-s3-fs-hadoop-1.9.1.jar \
+  /opt/flink/lib/ && \
+  wget https://repo1.maven.org/maven2/com/github/oshi/oshi-core/3.4.0/oshi-core-3.4.0.jar \
+  -O /opt/flink/lib/oshi-core-3.4.0.jar && \
+  wget https://repo1.maven.org/maven2/net/java/dev/jna/jna/5.4.0/jna-5.4.0.jar \
+  -O /opt/flink/lib/jna-5.4.0.jar && \
+  wget https://repo1.maven.org/maven2/net/java/dev/jna/jna-platform/5.4.0/jna-platform-5.4.0.jar \
+  -O /opt/flink/lib/jna-platform-5.4.0.jar && \
+  $FLINK_HOME/bin/taskmanager.sh start; \
+      while :;
+      do
+        if [[ -f $(find log -name '*taskmanager*.log' -print -quit) ]];
+          then tail -f -n +1 log/*taskmanager*.log;
+        fi;
+      done"]
+  service:
+    type: ClusterIP
+  nodeSelector: {}
+  affinity: {}
+  tolerations: {}
+  persistent:
+    enabled: false
+    storageClass:
+    size: 8Gi
+    mountPath: "/flink_state"
+  podManagementPolicy: Parallel
+  annotations:
+    "cluster-autoscaler.kubernetes.io/safe-to-evict": "false"
+  serviceAccount:
+    # Specifies whether a ServiceAccount should be created
+    create: true
+    # The name of the ServiceAccount to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name:
+  #livenessProbe will conduct checks for rpc port as tcpSocket probe
+  livenessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 60
+
+ingress:
+  enabled: false
+  annotations: {}
+  path: /
+  hosts: []
+  tls: []
+
+prometheus:
+  # serviceMonitor provides service discovery for prometheus operatored installations
+  serviceMonitor:
+    enabled: true
+    namespace:
+    interval: 5s
+    selector:
+      # According to default selector for prometheus operator
+      prometheus: kube-prometheus
+
+zookeeper:
+  enabled: false
+  replicaCount: 3
+  env:
+    ZK_HEAP_SIZE: "1G"
+  resources:
+    limits:
+      cpu: 400m
+      memory: 1256Mi
+  persistence:
+    enabled: true

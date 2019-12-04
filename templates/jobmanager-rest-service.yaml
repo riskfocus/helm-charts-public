@@ -1,14 +1,14 @@
-{{ if .Values.jobmanager.rest.enabled }}
+{{ if .Values.jobmanager.service.rest.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: flink-jobmanager-ui
+  name: {{ include "flink.fullname" . }}-jobmanager-rest
   labels:
 {{ include "flink.labels" . | indent 4 }}
     component: jobmanager
-{{- if .Values.jobmanager.service.annotations }}
+{{- if .Values.jobmanager.service.rest.annotations }}
   annotations:
-{{ toYaml .Values.jobmanager.service.annotations | indent 4 }}
+{{ toYaml .Values.jobmanager.service.rest.annotations | indent 4 }}
 {{- end }}
 spec:
   type: ClusterIP

@@ -6,10 +6,12 @@ metadata:
 {{ include "flink.labels" . | indent 4 }}
     component: jobmanager
   annotations:
-    "cluster-autoscaler.kubernetes.io/safe-to-evict": "false"
+  {{- range $key, $value := .Values.jobmanager.annotations }}
+    {{ $key | quote }}: {{ $value | quote }}
+  {{- end }}
 spec:
   replicas: {{ .Values.jobmanager.replicaCount }}
-  podManagementPolicy: Parallel
+  podManagementPolicy: {{ .Values.jobmanager.podManagementPolicy }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "flink.name" . }}
@@ -26,48 +28,44 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+      serviceAccount: {{ include "jobmanager.serviceAccount" . }}
       containers:
         - name: jobmanager
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           workingDir: {{ .Values.flink.workDir }}
           command:
-          {{- range .Values.jobmanager.command }}
+          {{- with .Values.jobmanager.command }}
             - {{ . | quote }}
           {{- end }}
           env:
-          # Redis access
-            - name: REDIS_HOST
-              value: {{ .Release.Namespace }}-redis-master
-            - name: REDIS_PORT
-              value: "6379"
-            - name: REDIS_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Release.Namespace }}-redis
-                  key: redis-password
-          #
-          {{- range $key, $value := .Values.jobmanager.extraEnvs }}
-            - name: {{ $key }}
-              value: {{ $value }}
+          {{- if .Values.extraEnvs }}
+          {{- toYaml .Values.extraEnvs | nindent 12 }}
           {{- end }}
-          {{- range $key, $value := .Values.extraEnvs }}
-            - name: {{ $key }}
-              value: {{ $value }}
+          {{- if .Values.jobmanager.extraEnvs }}
+          {{- toYaml .Values.jobmanager.extraEnvs | nindent 12 }}
           {{- end }}
           ports:
           {{- range $name, $port := .Values.jobmanager.ports }}
             - containerPort: {{ $port }}
               name: {{ $name }}
           {{- end }}
+          {{- if .Values.flink.monitoring.enabled }}
+            - containerPort: {{ .Values.flink.monitoring.port }}
+              name: metrics
+          {{- end }}
           livenessProbe:
             tcpSocket:
               port: {{ .Values.jobmanager.ports.rpc }}
-            initialDelaySeconds: 30
-            periodSeconds: 60
+            initialDelaySeconds: {{ .Values.jobmanager.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.jobmanager.livenessProbe.periodSeconds }}
           volumeMounts:
             - name: flink-config-volume
               mountPath: {{ .Values.flink.workDir }}/conf
+          {{- if .Values.jobmanager.persistent.enabled }}
+            - name: jobmanager-data
+              mountPath: {{ .Values.jobmanager.persistent.mountPath }}
+          {{- end }}
           resources:
             {{- toYaml .Values.jobmanager.resources | nindent 12 }}
 
@@ -80,16 +78,35 @@ spec:
                 path: flink-conf.yaml
               - key: log4j.properties
                 path: log4j.properties
+              {{- if .Values.jobmanager.highAvailability.enabled }}
+              - key: masters
+                path: masters
+              {{- end }}
 
-      {{- with .Values.nodeSelector }}
+      {{- with .Values.jobmanager.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-    {{- with .Values.affinity }}
+    {{- with .Values.jobmanager.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-    {{- with .Values.tolerations }}
+    {{- with .Values.jobmanager.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+{{- if .Values.jobmanager.persistent.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: jobmanager-data
+        annotations:
+          volume.alpha.kubernetes.io/storage-class: {{ .Values.jobmanager.persistent.storageClass }}
+        labels:
+{{ include "flink.labels" . | indent 10 }}
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: {{ .Values.jobmanager.persistent.size }}
+{{- end }}

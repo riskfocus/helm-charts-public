@@ -1,10 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: flink-jobmanager
+  name: {{ include "flink.fullname" . }}-jobmanager
   labels:
 {{ include "flink.labels" . | indent 4 }}
     component: jobmanager
+{{- if .Values.jobmanager.service.annotations }}
+  annotations:
+{{ toYaml .Values.jobmanager.service.annotations | indent 4 }}
+{{- end }}
 spec:
   type: {{ .Values.jobmanager.service.type }}
   ports:

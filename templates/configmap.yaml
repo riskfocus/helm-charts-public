@@ -8,15 +8,15 @@ data:
   flink-conf.yaml: |+
     jobmanager.rpc.address: flink-jobmanager
     taskmanager.numberOfTaskSlots: {{ .Values.taskmanager.numberOfTaskSlots }}
-    blob.server.port: 6124
-    jobmanager.rpc.port: 6123
-    taskmanager.rpc.port: 6122
+    blob.server.port: {{ .Values.jobmanager.ports.blob }}
+    jobmanager.rpc.port: {{ .Values.jobmanager.ports.rpc }}
+    taskmanager.rpc.port: {{ .Values.taskmanager.ports.rpc }}
     jobmanager.heap.size: {{ .Values.jobmanager.heapSize }}
     taskmanager.heap.size: {{ .Values.taskmanager.heapSize }}
     {{- if .Values.flink.monitoring.enabled }}
     metrics.reporters: prom
     metrics.reporter.prom.class: org.apache.flink.metrics.prometheus.PrometheusReporter
-    metrics.reporter.prom.port: 9999
+    metrics.reporter.prom.port: {{ .Values.flink.monitoring.port }}
       {{- if .Values.flink.monitoring.system.enabled }}
     metrics.system-resource: true
     metrics.system-resource-probing-interval: {{ .Values.flink.monitoring.system.probingInterval }}
@@ -25,10 +25,26 @@ data:
     metrics.latency.interval: {{ .Values.flink.monitoring.latency.probingInterval }}
       {{- end }}
     {{- end }}
+    {{- if .Values.flink.state.backend }}
+    state.backend: {{ .Values.flink.state.backend }}
+    {{- .Values.flink.state.params | nindent 4 }}
+      {{- if eq .Values.flink.state.backend "rocksdb" }}
+    {{- .Values.flink.state.rocksdb | nindent 4 }}
+      {{- end }}
+    {{- end }}
+    {{- if .Values.jobmanager.highAvailability.enabled }}
+    high-availability: zookeeper
+    high-availability.zookeeper.quorum: {{ .Values.jobmanager.highAvailability.zookeeperConnect }}
+    high-availability.zookeeper.path.root: /flink
+    high-availability.cluster-id: /flink
+    high-availability.storageDir: {{ .Values.jobmanager.highAvailability.storageDir }}
+    {{- end }}
   log4j.properties: |+
     log4j.rootLogger=INFO, file
-    log4j.logger.akka=INFO
-    log4j.logger.org.apache.kafka=INFO
+    log4j.logger.akka=WARN
+    log4j.logger.org.apache.kafka=WARN
+    log4j.logger.org.apache.kafka.clients.producer.ProducerConfig=WARN
+    log4j.logger.org.apache.kafka.clients.consumer.ConsumerConfig=WARN
     log4j.logger.org.apache.hadoop=INFO
     log4j.logger.org.apache.zookeeper=INFO
     log4j.appender.file=org.apache.log4j.FileAppender
@@ -36,3 +52,9 @@ data:
     log4j.appender.file.layout=org.apache.log4j.PatternLayout
     log4j.appender.file.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %-60c %x - %m%n
     log4j.logger.org.apache.flink.shaded.akka.org.jboss.netty.channel.DefaultChannelPipeline=ERROR, file
+{{- if .Values.jobmanager.highAvailability.enabled }}
+  masters: |
+  {{- range $i, $e := until (.Values.jobmanager.replicaCount | int) }}
+    {{ include "flink.fullname" $ }}-jobmanager-{{ $i }}.flink-jobmanager-headless.{{ $.Release.Namespace }}.svc:{{ $.Values.jobmanager.ports.ui }}
+  {{- end }}
+{{- end }}
