@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "flink.fullname" . }}-jobmanager
+  labels:
+{{ include "flink.labels" . | indent 4 }}
+    component: jobmanager
+{{- if .Values.jobmanager.service.annotations }}
+  annotations:
+{{ toYaml .Values.jobmanager.service.annotations | indent 4 }}
+{{- end }}
+spec:
+  type: {{ .Values.jobmanager.service.type }}
+  ports:
+    {{- range $name, $port := .Values.jobmanager.ports }}
+    - port: {{ $port }}
+      targetPort: {{ $name }}
+      protocol: TCP
+      name: {{ $name }}
+    {{- end }}
+    {{- if .Values.jobmanager.highAvailability.enabled }}
+    - port: {{ .Values.jobmanager.highAvailability.syncPort }}
+      targetPort: ha
+      protocol: TCP
+      name: ha
+    {{- end }}
+  selector:
+    app.kubernetes.io/name: {{ include "flink.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    component: jobmanager

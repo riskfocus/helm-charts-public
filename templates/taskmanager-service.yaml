@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "flink.fullname" . }}-taskmanager
+  labels:
+{{ include "flink.labels" . | indent 4 }}
+    component: taskmanager
+{{- if .Values.taskmanager.service.annotations }}
+  annotations:
+{{ toYaml .Values.taskmanager.service.annotations | indent 4 }}
+{{- end }}
+spec:
+  type: {{ .Values.taskmanager.service.type }}
+  ports:
+    {{- range $name, $port := .Values.taskmanager.ports }}
+    - port: {{ $port }}
+      targetPort: {{ $name }}
+      protocol: TCP
+      name: {{ $name }}
+    {{- end }}
+    {{- if .Values.flink.monitoring.enabled }}
+    - port: {{ .Values.flink.monitoring.port }}
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
+    {{- end }}
+  selector:
+    app.kubernetes.io/name: {{ include "flink.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    component: taskmanager

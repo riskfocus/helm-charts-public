@@ -1,0 +1,24 @@
+{{ if .Values.jobmanager.service.rest.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "flink.fullname" . }}-jobmanager-rest
+  labels:
+{{ include "flink.labels" . | indent 4 }}
+    component: jobmanager
+{{- if .Values.jobmanager.service.rest.annotations }}
+  annotations:
+{{ toYaml .Values.jobmanager.service.rest.annotations | indent 4 }}
+{{- end }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: {{ .Values.jobmanager.ports.ui }}
+      targetPort: {{ .Values.jobmanager.ports.ui }}
+      protocol: TCP
+      name: ui
+  selector:
+    app.kubernetes.io/name: {{ include "flink.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    component: jobmanager
+{{- end }}

@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "flink.fullname" . }}-config
+  labels:
+{{ include "flink.labels" . | indent 4 }}
+data:
+  flink-conf.yaml: |+
+    {{- if .Values.jobmanager.highAvailability.enabled }}
+    jobmanager.rpc.address: REPLACE_HOSTNAME
+    {{- end }}
+{{ include "flink.configuration" . | indent 4 }}
+  flink-conf-taskmanager.yaml: |+
+{{ include "flink.configuration" . | indent 4 }}
+  log4j.properties: |+
+    log4j.rootLogger=INFO, file
+    log4j.logger.akka=WARN
+    log4j.logger.org.apache.kafka=WARN
+    log4j.logger.org.apache.kafka.clients.producer.ProducerConfig=WARN
+    log4j.logger.org.apache.kafka.clients.consumer.ConsumerConfig=WARN
+    log4j.logger.org.apache.hadoop=INFO
+    log4j.logger.org.apache.zookeeper=INFO
+    log4j.appender.file=org.apache.log4j.FileAppender
+    log4j.appender.file.file=${log.file}
+    log4j.appender.file.layout=org.apache.log4j.PatternLayout
+    log4j.appender.file.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %-60c %x - %m%n
+    log4j.logger.org.apache.flink.shaded.akka.org.jboss.netty.channel.DefaultChannelPipeline=ERROR, file
+{{- if .Values.jobmanager.highAvailability.enabled }}
+  masters: |
+  {{- range $i, $e := until (.Values.jobmanager.replicaCount | int) }}
+    {{ include "flink.fullname" $ }}-jobmanager-{{ $i }}.flink-jobmanager-headless.{{ $.Release.Namespace }}.svc:{{ $.Values.jobmanager.ports.ui }}
+  {{- end }}
+{{- end }}
