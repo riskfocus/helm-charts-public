@@ -26,6 +26,8 @@ flink:
     system:
       enabled: true
       probingInterval: 5000
+    rocksdb:
+      enabled: false
   workDir: /opt/flink
   state:
     # backend for state. Available options: filesystem, rocksdb, memory; empty - for default(memory)
@@ -69,10 +71,12 @@ jobmanager:
     # storageDir for Jobmanagers. DFS expected.
     # Docs - Storage directory (required): JobManager metadata is persisted in the file system storageDir and only a pointer to this state is stored in ZooKeeper
     storageDir:
+    syncPort: 6150
   # extraEnvs passes envs to Jobmanagers
   extraEnvs: []
   ports:
     rpc: 6123
+    # blob port uses for Liveness probe
     blob: 6124
     ui: 8081
   replicaCount: 1
@@ -132,8 +136,11 @@ jobmanager:
     name:
   #livenessProbe will conduct checks for rpc port as tcpSocket probe
   livenessProbe:
-    initialDelaySeconds: 30
-    periodSeconds: 60
+    initialDelaySeconds: 10
+    periodSeconds: 15
+  readinessProbe:
+    periodSeconds: 10
+    initialDelaySeconds: 20
 
 taskmanager:
   # extraEnvs passes envs to Taskmanagers

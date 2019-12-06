@@ -18,6 +18,12 @@ spec:
       protocol: TCP
       name: {{ $name }}
     {{- end }}
+    {{- if .Values.jobmanager.highAvailability.enabled }}
+    - port: {{ .Values.jobmanager.highAvailability.syncPort }}
+      targetPort: ha
+      protocol: TCP
+      name: ha
+    {{- end }}
   selector:
     app.kubernetes.io/name: {{ include "flink.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}

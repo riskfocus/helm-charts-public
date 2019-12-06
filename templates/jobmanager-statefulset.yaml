@@ -17,6 +17,7 @@ spec:
       app.kubernetes.io/name: {{ include "flink.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
       component: jobmanager
+  serviceName: {{ include "flink.fullname" . }}-jobmanager-headless
   template:
     metadata:
       labels:
@@ -54,9 +55,19 @@ spec:
             - containerPort: {{ .Values.flink.monitoring.port }}
               name: metrics
           {{- end }}
+          {{- if .Values.jobmanager.highAvailability.enabled }}
+            - containerPort: {{ .Values.jobmanager.highAvailability.syncPort }}
+              name: ha
+          {{- end }}
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.jobmanager.ports.ui }}
+            periodSeconds: {{ .Values.jobmanager.readinessProbe.periodSeconds }}
+            initialDelaySeconds: {{ .Values.jobmanager.readinessProbe.initialDelaySeconds }}
           livenessProbe:
             tcpSocket:
-              port: {{ .Values.jobmanager.ports.rpc }}
+              port: {{ .Values.jobmanager.ports.blob }}
             initialDelaySeconds: {{ .Values.jobmanager.livenessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.jobmanager.livenessProbe.periodSeconds }}
           volumeMounts:

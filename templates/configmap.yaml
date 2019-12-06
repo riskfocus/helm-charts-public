@@ -6,7 +6,7 @@ metadata:
 {{ include "flink.labels" . | indent 4 }}
 data:
   flink-conf.yaml: |+
-    jobmanager.rpc.address: flink-jobmanager
+    jobmanager.rpc.address: {{ include "flink.fullname" . }}-jobmanager
     taskmanager.numberOfTaskSlots: {{ .Values.taskmanager.numberOfTaskSlots }}
     blob.server.port: {{ .Values.jobmanager.ports.blob }}
     jobmanager.rpc.port: {{ .Values.jobmanager.ports.rpc }}
@@ -24,6 +24,13 @@ data:
       {{- if .Values.flink.monitoring.latency.enabled }}
     metrics.latency.interval: {{ .Values.flink.monitoring.latency.probingInterval }}
       {{- end }}
+      {{- if .Values.flink.monitoring.rocksdb.enabled }}
+    state.backend.rocksdb.metrics.cur-size-active-mem-table: true
+    state.backend.rocksdb.metrics.cur-size-all-mem-tables: true
+    state.backend.rocksdb.metrics.estimate-live-data-size: true
+    state.backend.rocksdb.metrics.size-all-mem-tables: true
+    state.backend.rocksdb.metrics.estimate-num-keys: true
+      {{- end }}
     {{- end }}
     {{- if .Values.flink.state.backend }}
     state.backend: {{ .Values.flink.state.backend }}
@@ -38,6 +45,7 @@ data:
     high-availability.zookeeper.path.root: /flink
     high-availability.cluster-id: /flink
     high-availability.storageDir: {{ .Values.jobmanager.highAvailability.storageDir }}
+    high-availability.jobmanager.port: {{ .Values.jobmanager.highAvailability.syncPort }}
     {{- end }}
   log4j.properties: |+
     log4j.rootLogger=INFO, file
