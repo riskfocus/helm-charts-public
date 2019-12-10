@@ -40,6 +40,8 @@ spec:
             - "-c"
             - {{ include "jobmanager.command" . | quote }}
           env:
+            - name: JVM_ARGS
+              value: {{ tpl .Values.jobmanager.jvmArgs . | quote }}
           {{- if .Values.extraEnvs }}
           {{- toYaml .Values.extraEnvs | nindent 12 }}
           {{- end }}
@@ -80,6 +82,9 @@ spec:
             - name: flink-config-volume
               mountPath: {{ .Values.flink.workDir }}/conf/log4j.properties
               subPath: log4j.properties
+            - name: flink-config-volume
+              mountPath: {{ .Values.flink.workDir }}/conf/security.properties
+              subPath: security.properties
               {{- if .Values.jobmanager.highAvailability.enabled }}
             - name: flink-config-volume
               mountPath: {{ .Values.flink.workDir }}/conf/masters
@@ -101,6 +106,8 @@ spec:
                 path: flink-conf.yaml.tpl
               - key: log4j.properties
                 path: log4j.properties
+              - key: security.properties
+                path: security.properties
               {{- if .Values.jobmanager.highAvailability.enabled }}
               - key: masters
                 path: masters

@@ -39,6 +39,8 @@ spec:
             - "-c"
             - {{ include "taskmanager.command" . | quote }}
           env:
+            - name: JVM_ARGS
+              value: {{ tpl .Values.taskmanager.jvmArgs . | quote }}
           {{- if .Values.extraEnvs }}
           {{- toYaml .Values.extraEnvs | nindent 12 }}
           {{- end }}
@@ -78,6 +80,8 @@ spec:
                 path: flink-conf.yaml
               - key: log4j.properties
                 path: log4j.properties
+              - key: security.properties
+                path: security.properties
               {{- if .Values.jobmanager.highAvailability.enabled }}
               - key: masters
                 path: masters

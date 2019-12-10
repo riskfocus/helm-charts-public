@@ -87,6 +87,9 @@ jobmanager:
       then tail -f -n +1 log/*jobmanager*.log;
       fi;
       done
+  # Additional param for JVM to support security.properties override
+  # check configMap for more information
+  jvmArgs: "-Djava.security.properties={{ .Values.flink.workDir }}/conf/security.properties"
   # extraEnvs passes envs to Jobmanagers
   extraEnvs: []
   ports:
@@ -160,6 +163,9 @@ jobmanager:
     initialDelaySeconds: 20
 
 taskmanager:
+  # Additional param for JVM to support security.properties override
+  # check configMap for more information
+  jvmArgs: "-Djava.security.properties={{ .Values.flink.workDir }}/conf/security.properties"
   # extraEnvs passes envs to Taskmanagers
   extraEnvs: []
   ports:
