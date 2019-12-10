@@ -29,6 +29,7 @@ flink:
     rocksdb:
       enabled: false
   workDir: /opt/flink
+  params: ""
   state:
     # backend for state. Available options: filesystem, rocksdb, memory; empty - for default(memory)
     backend:

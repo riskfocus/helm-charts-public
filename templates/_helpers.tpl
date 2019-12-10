@@ -108,6 +108,7 @@ provide jobmanager.rpc.address to Taskmanagers
     taskmanager.rpc.port: {{ .Values.taskmanager.ports.rpc }}
     jobmanager.heap.size: {{ .Values.jobmanager.heapSize }}
     taskmanager.heap.size: {{ .Values.taskmanager.heapSize }}
+    {{- .Values.flink.params | nindent 4 }}
     {{- if .Values.flink.monitoring.enabled }}
     metrics.reporters: prom
     metrics.reporter.prom.class: org.apache.flink.metrics.prometheus.PrometheusReporter
