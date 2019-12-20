@@ -1,0 +1,13 @@
+apiVersion: v1
+entries:
+  flink:
+  - apiVersion: v1
+    appVersion: 1.9.1
+    created: "2019-12-20T16:54:15.557911+02:00"
+    description: Chart for Apache Flink
+    digest: 5c81136d71a50d16c4197f296eec2ee7f8d3c466a739669642764d51984f86e4
+    name: flink
+    urls:
+    - flink-0.1.3.tgz
+    version: 0.1.3
+generated: "2019-12-20T16:54:15.556542+02:00"
