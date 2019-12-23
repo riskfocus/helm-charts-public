@@ -33,22 +33,23 @@ To install the chart with the release name `my-flink` in the default
 namespace:
 
 ```
-$ git clone https://github.com/riskfocus/flink-helmchart
-$ helm install --name my-flink ./flink-helmchart
+$ helm repo add riskfocus https://riskfocus.github.io/helm-charts-public
+$ helm repo update
+$ helm install --name my-flink riskfoucs/flink
 ```
 
 If using a dedicated namespace(recommended) then make sure the namespace
 exists with:
 
 ```
-$ git clone https://github.com/riskfocus/flink-helmchart
-$ kubectl create ns flink
-$ helm install --name my-flink --namespace flink ./flink-helmchart
+$ helm repo add riskfocus https://riskfocus.github.io/helm-charts-public
+$ helm repo update
+$ helm install --name my-flink --namespace flink riskfoucs/flink
 ```
 
 This chart can includes a ZooKeeper chart as a dependency to the Flink
 cluster Jobmanagers HA mode in its `requirement.yaml`. The chart can be customized using the
-following configurable parameters:
+following configurable parameters(other parameters can be found in values.yaml):
 
 | Parameter                                | Description                                                                                                                                                              | Default                |
 |------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------|
@@ -75,3 +76,13 @@ following configurable parameters:
 | `zookeeper.port`                         | Port of Zookeeper Cluster                                                                                                                                                | `2181`                 |
 | `zookeeper.affinity`                     | Defines affinities and anti-affinities for pods as defined in: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity preferences | `{}`                   |
 | `zookeeper.nodeSelector`                 | Node labels for pod assignment                                                                                                                                           | `{}`                   |
+
+### Install with HA
+
+You can install this chart with enabled HA based on Zookeeper by provided follow parameters:
+```
+$ helm install --name my-flink riskfoucs/flink --set \
+zookeeper.enabled=true,jobmanager.replicaCount=2,jobmanager.highAvailability.enabled=true,jobmanager.highAvailability.storageDir=s3://MY_BUCKET/flink/jobmanager
+```
+* storageDir can be different for your installation, see 
+  https://ci.apache.org/projects/flink/flink-docs-stable/ops/config.html#high-availability-storagedir
