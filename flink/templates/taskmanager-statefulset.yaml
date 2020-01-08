@@ -1,5 +1,9 @@
 apiVersion: apps/v1
+{{- if .Values.taskmanager.statefulset }}
 kind: StatefulSet
+{{- else }}
+kind: Deployment
+{{- end }}
 metadata:
   name: {{ include "flink.fullname" . }}-taskmanager
   labels:
@@ -11,7 +15,12 @@ metadata:
   {{- end }}
 spec:
   replicas: {{ .Values.taskmanager.replicaCount }}
+  {{- if .Values.taskmanager.statefulset }}
   podManagementPolicy: {{ .Values.taskmanager.podManagementPolicy }}
+  {{- else }}
+  strategy:
+    type: Recreate
+  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "flink.name" . }}
@@ -64,7 +73,7 @@ spec:
           volumeMounts:
             - name: flink-config-volume
               mountPath: {{ .Values.flink.workDir }}/conf
-          {{- if .Values.taskmanager.persistent.enabled }}
+          {{- if and .Values.taskmanager.persistent.enabled .Values.taskmanager.statefulset }}
             - name: taskmanager-data
               mountPath: {{ .Values.taskmanager.persistent.mountPath }}
           {{- end }}
@@ -99,7 +108,7 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-{{- if .Values.taskmanager.persistent.enabled }}
+{{- if and .Values.taskmanager.persistent.enabled .Values.taskmanager.statefulset }}
   volumeClaimTemplates:
     - metadata:
         name: taskmanager-data

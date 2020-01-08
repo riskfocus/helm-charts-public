@@ -1,5 +1,9 @@
 apiVersion: apps/v1
+{{- if .Values.jobmanager.statefulset }}
 kind: StatefulSet
+{{- else }}
+kind: Deployment
+{{- end }}
 metadata:
   name: {{ include "flink.fullname" . }}-jobmanager
   labels:
@@ -11,13 +15,20 @@ metadata:
   {{- end }}
 spec:
   replicas: {{ .Values.jobmanager.replicaCount }}
+  {{- if .Values.jobmanager.statefulset }}
   podManagementPolicy: {{ .Values.jobmanager.podManagementPolicy }}
+  {{- else }}
+  strategy:
+    type: Recreate
+  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ include "flink.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
       component: jobmanager
+  {{- if .Values.jobmanager.statefulset }}
   serviceName: {{ include "flink.fullname" . }}-jobmanager-headless
+  {{- end }}
   template:
     metadata:
       labels:
@@ -90,7 +101,7 @@ spec:
               mountPath: {{ .Values.flink.workDir }}/conf/masters
               subPath: masters
               {{- end }}
-          {{- if .Values.jobmanager.persistent.enabled }}
+          {{- if and .Values.jobmanager.persistent.enabled .Values.jobmanager.statefulset }}
             - name: jobmanager-data
               mountPath: {{ .Values.jobmanager.persistent.mountPath }}
           {{- end }}
@@ -125,7 +136,7 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-{{- if .Values.jobmanager.persistent.enabled }}
+{{- if and .Values.jobmanager.persistent.enabled .Values.jobmanager.statefulset }}
   volumeClaimTemplates:
     - metadata:
         name: jobmanager-data

@@ -64,6 +64,9 @@ flink:
 extraEnvs: []
 
 jobmanager:
+  # Statefulset option will create Jobmanager as a StatefulSet
+  # A necessary option for HA mode and Persistent
+  statefulset: true
   # highAvailability configuration based on zookeeper
   highAvailability:
     # enabled also will enable zookeeper Dependency
@@ -164,6 +167,9 @@ jobmanager:
     initialDelaySeconds: 20
 
 taskmanager:
+  # Statefulset option will create Taskmanager as a StatefulSet
+  # A necessary option for Persistent
+  statefulset: true
   # Additional param for JVM to support security.properties override
   # check configMap for more information
   jvmArgs: "-Djava.security.properties={{ .Values.flink.workDir }}/conf/security.properties"
