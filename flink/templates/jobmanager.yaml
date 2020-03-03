@@ -41,6 +41,15 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       serviceAccount: {{ include "jobmanager.serviceAccount" . }}
+      initContainers:
+      {{- range $ct, $params := .Values.jobmanager.initContainers }}
+        - name: {{ $ct }}
+          image: {{ $params.image }}
+          command:
+          {{- range $params.command }}
+            - {{ . }}
+          {{- end }}
+      {{- end }}
       containers:
         - name: jobmanager
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

@@ -38,6 +38,15 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       serviceAccount: {{ include "taskmanager.serviceAccount" . }}
+      initContainers:
+      {{- range $ct, $params := .Values.taskmanager.initContainers }}
+        - name: {{ $ct }}
+          image: {{ $params.image }}
+          command:
+          {{- range $params.command }}
+            - {{ . }}
+          {{- end }}
+      {{- end }}
       containers:
         - name: taskmanager
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

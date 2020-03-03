@@ -2,6 +2,9 @@
 
 This is an implementation of https://ci.apache.org/projects/flink/flink-docs-stable/ops/deployment/kubernetes.html
 
+This chart will install session cluster https://ci.apache.org/projects/flink/flink-docs-stable/ops/deployment/kubernetes.html#flink-session-cluster-on-kubernetes.
+If you are interested in supporting session/job clusters: https://github.com/GoogleCloudPlatform/flink-on-k8s-operator
+
 ## Pre Requisites:
 
 * Kubernetes 1.3 with alpha APIs enabled and support for storage classes
@@ -54,7 +57,7 @@ following configurable parameters(other parameters can be found in values.yaml):
 | Parameter                                | Description                                                                                                                                                              | Default                |
 |------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------|
 | `image.repository`                       | Flink Container image name                                                                                                                                               | `flink`                |
-| `image.tag`                              | Flink Container image tag                                                                                                                                                | `1.9.1-scala_2.12`     |
+| `image.tag`                              | Flink Container image tag                                                                                                                                                | `1.10.0-scala_2.12`     |
 | `image.PullPolicy`                       | Flink Containers pull policy                                                                                                                                             | `IfNotPresent`         |
 | `flink.monitoring.enabled`               | Enable flink monitoring                                                                                                                                                  | `true`                 |
 | `jobmanager.highAvailability.enabled`    | Enabled jobmanager HA mode key                                                                                                                                           | `false`                |

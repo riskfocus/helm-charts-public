@@ -7,7 +7,7 @@ fullnameOverride: ""
 
 image:
   repository: flink
-  tag: 1.9.1-scala_2.12
+  tag: 1.10.0-scala_2.12
   pullPolicy: IfNotPresent
 imagePullSecrets: []
 
@@ -67,6 +67,15 @@ jobmanager:
   # Statefulset option will create Jobmanager as a StatefulSet
   # A necessary option for HA mode and Persistent
   statefulset: true
+  # Init containers
+  initContainers: {}
+  # Example
+  #  test:
+  #    image: busybox:1.28
+  #    command:
+  #      - /bin/sh
+  #      - -c
+  #      - "echo test"
   # highAvailability configuration based on zookeeper
   highAvailability:
     # enabled also will enable zookeeper Dependency
@@ -112,8 +121,7 @@ jobmanager:
   #      cpu: 3800m
   #      memory: 8000Mi
   additionalCommand: >-
-    cp /opt/flink/opt/flink-metrics-prometheus-1.9.1.jar
-    /opt/flink/opt/flink-s3-fs-hadoop-1.9.1.jar
+    cp /opt/flink/opt/*
     /opt/flink/lib/ &&
     wget https://repo1.maven.org/maven2/com/github/oshi/oshi-core/3.4.0/oshi-core-3.4.0.jar
     -O /opt/flink/lib/oshi-core-3.4.0.jar &&
@@ -187,8 +195,7 @@ taskmanager:
   #      memory: 8000Mi
   additionalCommand: >-
     cp
-    /opt/flink/opt/flink-metrics-prometheus-1.9.1.jar
-    /opt/flink/opt/flink-s3-fs-hadoop-1.9.1.jar
+    /opt/flink/opt/*.jar
     /opt/flink/lib/ &&
     wget https://repo1.maven.org/maven2/com/github/oshi/oshi-core/3.4.0/oshi-core-3.4.0.jar
     -O /opt/flink/lib/oshi-core-3.4.0.jar &&
