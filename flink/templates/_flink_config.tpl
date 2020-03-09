@@ -8,7 +8,12 @@ provide jobmanager.rpc.address to Taskmanagers
     blob.server.port: {{ .Values.jobmanager.ports.blob }}
     taskmanager.rpc.port: {{ .Values.taskmanager.ports.rpc }}
     jobmanager.heap.size: {{ .Values.jobmanager.heapSize }}
-    taskmanager.memory.process.size: {{ .Values.taskmanager.heapSize }}
+    {{- if .Values.taskmanager.memoryProcessSize }}
+    taskmanager.memory.process.size: {{ .Values.taskmanager.memoryProcessSize }}
+    {{- end }}
+    {{- if .Values.taskmanager.memoryProcessSize }}
+    taskmanager.memory.flink.size: {{ .Values.taskmanager.memoryProcessSize }}
+    {{- end }}
     {{- .Values.flink.params | nindent 4 }}
     {{- if .Values.flink.monitoring.enabled }}
     metrics.reporters: prom

@@ -187,7 +187,8 @@ taskmanager:
     rpc: 6122
   replicaCount: 4
   numberOfTaskSlots: 1
-  heapSize: 1g
+  memoryProcessSize: 1g
+  memoryFlinkSize:
   resources: {}
   # Example
   #    limits:
