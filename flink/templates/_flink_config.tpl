@@ -11,8 +11,8 @@ provide jobmanager.rpc.address to Taskmanagers
     {{- if .Values.taskmanager.memoryProcessSize }}
     taskmanager.memory.process.size: {{ .Values.taskmanager.memoryProcessSize }}
     {{- end }}
-    {{- if .Values.taskmanager.memoryProcessSize }}
-    taskmanager.memory.flink.size: {{ .Values.taskmanager.memoryProcessSize }}
+    {{- if .Values.taskmanager.memoryFlinkSize }}
+    taskmanager.memory.flink.size: {{ .Values.taskmanager.memoryFlinkSize }}
     {{- end }}
     {{- .Values.flink.params | nindent 4 }}
     {{- if .Values.flink.monitoring.enabled }}
