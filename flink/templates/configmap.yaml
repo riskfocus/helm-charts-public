@@ -27,10 +27,8 @@ data:
     log4j.logger.org.apache.flink.shaded.akka.org.jboss.netty.channel.DefaultChannelPipeline=ERROR, file
   security.properties:
     # The java-level namelookup cache policy for successful lookups
-    networkaddress.cache.ttl=5
+    networkaddress.cache.ttl=30
 {{- if .Values.jobmanager.highAvailability.enabled }}
   masters: |
-  {{- range $i, $e := until (.Values.jobmanager.replicaCount | int) }}
-    {{ include "flink.fullname" $ }}-jobmanager-{{ $i }}.flink-jobmanager-headless.{{ $.Release.Namespace }}.svc:{{ $.Values.jobmanager.ports.ui }}
-  {{- end }}
+   {{ include "flink.fullname" . }}-jobmanager
 {{- end }}

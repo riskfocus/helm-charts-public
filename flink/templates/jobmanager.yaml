@@ -35,6 +35,10 @@ spec:
         app.kubernetes.io/name: {{ include "flink.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
         component: jobmanager
+      annotations:
+      {{- range $key, $value := .Values.jobmanager.podAnnotations }}
+        {{ $key | quote }}: {{ $value | quote }}
+      {{- end }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -62,6 +66,10 @@ spec:
           env:
             - name: JVM_ARGS
               value: {{ tpl .Values.jobmanager.jvmArgs . | quote }}
+            - name: FLINK_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
           {{- if .Values.extraEnvs }}
           {{- toYaml .Values.extraEnvs | nindent 12 }}
           {{- end }}

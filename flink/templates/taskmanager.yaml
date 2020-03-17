@@ -32,6 +32,10 @@ spec:
         app.kubernetes.io/name: {{ include "flink.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
         component: taskmanager
+      annotations:
+      {{- range $key, $value := .Values.taskmanager.podAnnotations }}
+        {{ $key | quote }}: {{ $value | quote }}
+      {{- end }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
