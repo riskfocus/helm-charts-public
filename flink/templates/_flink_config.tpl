@@ -14,7 +14,6 @@ provide jobmanager.rpc.address to Taskmanagers
     {{- if .Values.taskmanager.memoryFlinkSize }}
     taskmanager.memory.flink.size: {{ .Values.taskmanager.memoryFlinkSize }}
     {{- end }}
-    {{- .Values.flink.params | nindent 4 }}
     {{- if .Values.flink.monitoring.enabled }}
     metrics.reporters: prom
     metrics.reporter.prom.class: org.apache.flink.metrics.prometheus.PrometheusReporter
@@ -44,12 +43,13 @@ provide jobmanager.rpc.address to Taskmanagers
     {{- if .Values.jobmanager.highAvailability.enabled }}
     high-availability: zookeeper
     high-availability.zookeeper.quorum: {{ .Values.jobmanager.highAvailability.zookeeperConnect }}
-    high-availability.zookeeper.path.root: /flink
-    high-availability.cluster-id: /flink
+    high-availability.zookeeper.path.root: {{ .Values.jobmanager.highAvailability.zookeeperRootpath }}
+    high-availability.cluster-id: {{ .Values.jobmanager.highAvailability.clusterId }}
     high-availability.storageDir: {{ .Values.jobmanager.highAvailability.storageDir }}
     high-availability.jobmanager.port: {{ .Values.jobmanager.highAvailability.syncPort }}
     {{- else }}
     jobmanager.rpc.address: {{ include "flink.fullname" . }}-jobmanager
     jobmanager.rpc.port: {{ .Values.jobmanager.ports.rpc }}
     {{- end }}
+    {{- .Values.flink.params | nindent 4 }}
 {{- end -}}

@@ -80,6 +80,8 @@ jobmanager:
     # enabled also will enable zookeeper Dependency
     enabled: false
     zookeeperConnect: zookeeper:2181
+    zookeeperRootPath: /flink
+    clusterId: /flink
     # storageDir for Jobmanagers. DFS expected.
     # Docs - Storage directory (required): JobManager metadata is persisted in the file system storageDir and only a pointer to this state is stored in ZooKeeper
     storageDir:
