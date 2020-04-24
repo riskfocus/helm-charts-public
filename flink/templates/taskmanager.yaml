@@ -26,6 +26,9 @@ spec:
       app.kubernetes.io/name: {{ include "flink.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
       component: taskmanager
+  {{- if .Values.taskmanager.statefulset }}
+  serviceName: {{ include "flink.fullname" . }}-taskmanager
+  {{- end }}
   template:
     metadata:
       labels:
