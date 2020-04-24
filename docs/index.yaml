@@ -3,7 +3,30 @@ entries:
   flink:
   - apiVersion: v1
     appVersion: 1.10.0
-    created: "2020-03-17T15:23:03.077337+02:00"
+    created: "2020-04-24T10:47:22.708619+03:00"
+    dependencies:
+    - condition: zookeeper.enabled
+      name: zookeeper
+      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      version: 2.0.0
+    description: Chart for Apache Flink
+    digest: 3523f76507e68bcd7d79aeb0bbd674dadea8df9e0219e93fb25a4c95e5cd170d
+    home: https://github.com/riskfocus/helm-charts-public
+    maintainers:
+    - email: charts-maintainers@riskfocus.com
+      name: charts-maintainers
+    name: flink
+    urls:
+    - flink-0.1.10.tgz
+    version: 0.1.10
+  - apiVersion: v1
+    appVersion: 1.10.0
+    created: "2020-04-24T10:47:22.732775+03:00"
+    dependencies:
+    - condition: zookeeper.enabled
+      name: zookeeper
+      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      version: 2.0.0
     description: Chart for Apache Flink
     digest: 5f0fee8acf2bc42f14887b7e41ddd75924cfd14787b828091a32ca4d48e576e3
     home: https://github.com/riskfocus/helm-charts-public
@@ -16,7 +39,12 @@ entries:
     version: 0.1.9
   - apiVersion: v1
     appVersion: 1.10.0
-    created: "2020-03-17T15:23:03.07435+02:00"
+    created: "2020-04-24T10:47:22.72846+03:00"
+    dependencies:
+    - condition: zookeeper.enabled
+      name: zookeeper
+      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      version: 2.0.0
     description: Chart for Apache Flink
     digest: 2f5d762b569990681854bc0929b464bb32238ebf9cce7c935ff66a64916d5bb0
     home: https://github.com/riskfocus/helm-charts-public
@@ -29,7 +57,12 @@ entries:
     version: 0.1.8
   - apiVersion: v1
     appVersion: 1.10.0
-    created: "2020-03-17T15:23:03.072544+02:00"
+    created: "2020-04-24T10:47:22.725317+03:00"
+    dependencies:
+    - condition: zookeeper.enabled
+      name: zookeeper
+      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      version: 2.0.0
     description: Chart for Apache Flink
     digest: 5737d1376b2aa23639dc19dc4ca58aebf7fc5e4e743046dcf3d2b3377f10d18d
     home: https://github.com/riskfocus/helm-charts-public
@@ -42,7 +75,12 @@ entries:
     version: 0.1.7
   - apiVersion: v1
     appVersion: 1.10.0
-    created: "2020-03-17T15:23:03.070811+02:00"
+    created: "2020-04-24T10:47:22.722166+03:00"
+    dependencies:
+    - condition: zookeeper.enabled
+      name: zookeeper
+      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      version: 2.0.0
     description: Chart for Apache Flink
     digest: 1456bb9f756465a6ed46c450b4697611eda1294f6fee90157ebf2c278e42c8bc
     home: https://github.com/riskfocus/helm-charts-public
@@ -55,7 +93,12 @@ entries:
     version: 0.1.6
   - apiVersion: v1
     appVersion: 1.10.0
-    created: "2020-03-17T15:23:03.068727+02:00"
+    created: "2020-04-24T10:47:22.718334+03:00"
+    dependencies:
+    - condition: zookeeper.enabled
+      name: zookeeper
+      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      version: 2.0.0
     description: Chart for Apache Flink
     digest: 620b68b9f9304ae28334ff584f0b3ffda04bdf97802ab828f8d3acaca4326003
     home: https://github.com/riskfocus/helm-charts-public
@@ -68,7 +111,12 @@ entries:
     version: 0.1.5
   - apiVersion: v1
     appVersion: 1.9.1
-    created: "2020-03-17T15:23:03.066978+02:00"
+    created: "2020-04-24T10:47:22.715049+03:00"
+    dependencies:
+    - condition: zookeeper.enabled
+      name: zookeeper
+      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      version: 2.0.0
     description: Chart for Apache Flink
     digest: d0f20cb057c29f3b4e954307be61d4ff57d7cf4ddd16b42d5bec62573754c4bc
     maintainers:
@@ -80,11 +128,16 @@ entries:
     version: 0.1.4
   - apiVersion: v1
     appVersion: 1.9.1
-    created: "2020-03-17T15:23:03.064706+02:00"
+    created: "2020-04-24T10:47:22.711785+03:00"
+    dependencies:
+    - condition: zookeeper.enabled
+      name: zookeeper
+      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      version: 2.0.0
     description: Chart for Apache Flink
     digest: 3bbde2e93832769fc8f2532cd3703747121e4907fa8e4b0d54744444aeee24a3
     name: flink
     urls:
     - flink-0.1.3.tgz
     version: 0.1.3
-generated: "2020-03-17T15:23:03.061827+02:00"
+generated: "2020-04-24T10:47:22.704878+03:00"
