@@ -250,7 +250,7 @@ ingress:
 prometheus:
   # serviceMonitor provides service discovery for prometheus operatored installations
   serviceMonitor:
-    enabled: true
+    enabled: false
     namespace:
     interval: 5s
     selector:

@@ -2,7 +2,7 @@ apiVersion: v1
 appVersion: "1.10.0"
 description: Chart for Apache Flink
 name: flink
-version: 0.1.10
+version: 0.1.11
 maintainers:
   - name: charts-maintainers
     email: charts-maintainers@riskfocus.com
