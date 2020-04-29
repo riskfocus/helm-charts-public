@@ -38,7 +38,7 @@ namespace:
 ```
 $ helm repo add riskfocus https://riskfocus.github.io/helm-charts-public
 $ helm repo update
-$ helm install --name my-flink riskfoucs/flink
+$ helm install --name my-flink riskfocus/flink
 ```
 
 If using a dedicated namespace(recommended) then make sure the namespace
@@ -47,7 +47,7 @@ exists with:
 ```
 $ helm repo add riskfocus https://riskfocus.github.io/helm-charts-public
 $ helm repo update
-$ helm install --name my-flink --namespace flink riskfoucs/flink
+$ helm install --name my-flink --namespace flink riskfocus/flink
 ```
 
 This chart can includes a ZooKeeper chart as a dependency to the Flink
