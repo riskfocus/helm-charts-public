@@ -79,7 +79,7 @@ jobmanager:
   highAvailability:
     # enabled also will enable zookeeper Dependency
     enabled: false
-    zookeeperConnect: zookeeper:2181
+    zookeeperConnect: "{{ .Release.Name }}-zookeeper:{{ .Values.zookeeper.env.ZOO_PORT }}"
     zookeeperRootPath: /flink
     clusterId: /flink
     # storageDir for Jobmanagers. DFS expected.
@@ -262,6 +262,7 @@ zookeeper:
   replicaCount: 3
   env:
     ZK_HEAP_SIZE: "1G"
+    ZOO_PORT: 2181
   resources:
     limits:
       cpu: 400m
