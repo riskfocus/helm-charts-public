@@ -85,10 +85,6 @@ spec:
             - containerPort: {{ .Values.flink.monitoring.port }}
               name: metrics
           {{- end }}
-          {{- if .Values.flink.monitoring.enabled }}
-            - containerPort: {{ .Values.flink.monitoring.port }}
-              name: metrics
-          {{- end }}
           {{- if .Values.jobmanager.highAvailability.enabled }}
             - containerPort: {{ .Values.jobmanager.highAvailability.syncPort }}
               name: ha
