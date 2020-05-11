@@ -24,6 +24,12 @@ spec:
       protocol: TCP
       name: ha
     {{- end }}
+    {{- if .Values.flink.monitoring.enabled }}
+    - port: {{ .Values.flink.monitoring.port }}
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
+    {{- end }}
   selector:
     app.kubernetes.io/name: {{ include "flink.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
