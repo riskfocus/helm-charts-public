@@ -170,7 +170,7 @@ jobmanager:
       annotations: {}
   nodeSelector: {}
   affinity: {}
-  tolerations: {}
+  tolerations: []
   persistent:
     enabled: false
     storageClass:
@@ -237,7 +237,7 @@ taskmanager:
     type: ClusterIP
   nodeSelector: {}
   affinity: {}
-  tolerations: {}
+  tolerations: []
   persistent:
     enabled: false
     storageClass:

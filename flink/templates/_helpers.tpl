@@ -43,3 +43,20 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
+
+{{/*
+Return  the proper Storage Class for slave
+*/}}
+{{- define "flink.taskmanager.storageClass" -}}
+{{/*
+Helm 2.11 supports the assignment of a value to a variable defined in a different scope,
+but Helm 2.9 and 2.10 does not support it, so we need to implement this if-else logic.
+*/}}
+{{- if .Values.taskmanager.persistent.storageClass -}}
+    {{- if (eq "-" .Values.taskmanager.persistent.storageClass) -}}
+        {{- printf "storageClassName: \"\"" -}}
+    {{- else }}
+        {{- printf "storageClassName: %s" .Values.taskmanager.persistent.storageClass -}}
+    {{- end -}}
+{{- end -}}
+{{- end -}}
