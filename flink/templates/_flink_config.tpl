@@ -43,7 +43,7 @@ provide jobmanager.rpc.address to Taskmanagers
     {{- if .Values.jobmanager.highAvailability.enabled }}
     high-availability: zookeeper
     high-availability.zookeeper.quorum: {{ tpl .Values.jobmanager.highAvailability.zookeeperConnect . }}
-    high-availability.zookeeper.path.root: {{ .Values.jobmanager.highAvailability.zookeeperRootpath }}
+    high-availability.zookeeper.path.root: {{ .Values.jobmanager.highAvailability.zookeeperRootPath }}
     high-availability.cluster-id: {{ .Values.jobmanager.highAvailability.clusterId }}
     high-availability.storageDir: {{ .Values.jobmanager.highAvailability.storageDir }}
     high-availability.jobmanager.port: {{ .Values.jobmanager.highAvailability.syncPort }}
