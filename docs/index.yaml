@@ -2,8 +2,26 @@ apiVersion: v1
 entries:
   flink:
   - apiVersion: v1
+    appVersion: 1.10.1
+    created: "2020-06-09T14:22:03.192486+03:00"
+    dependencies:
+    - condition: zookeeper.enabled
+      name: zookeeper
+      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      version: 2.0.0
+    description: Chart for Apache Flink
+    digest: bf57a776d68319946186410e67629fa9dc1e4a8d4f84ebd2373ec032ae876471
+    home: https://github.com/riskfocus/helm-charts-public
+    maintainers:
+    - email: charts-maintainers@riskfocus.com
+      name: charts-maintainers
+    name: flink
+    urls:
+    - flink-0.1.16.tgz
+    version: 0.1.16
+  - apiVersion: v1
     appVersion: 1.10.0
-    created: "2020-05-11T13:14:35.840602+03:00"
+    created: "2020-06-09T14:22:03.189145+03:00"
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
@@ -21,7 +39,7 @@ entries:
     version: 0.1.15
   - apiVersion: v1
     appVersion: 1.10.0
-    created: "2020-05-11T13:14:35.837856+03:00"
+    created: "2020-06-09T14:22:03.185726+03:00"
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
@@ -39,7 +57,7 @@ entries:
     version: 0.1.14
   - apiVersion: v1
     appVersion: 1.10.0
-    created: "2020-05-11T13:14:35.834735+03:00"
+    created: "2020-06-09T14:22:03.181999+03:00"
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
@@ -57,7 +75,7 @@ entries:
     version: 0.1.13
   - apiVersion: v1
     appVersion: 1.10.0
-    created: "2020-05-11T13:14:35.831081+03:00"
+    created: "2020-06-09T14:22:03.177617+03:00"
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
@@ -75,7 +93,7 @@ entries:
     version: 0.1.12
   - apiVersion: v1
     appVersion: 1.10.0
-    created: "2020-05-11T13:14:35.826014+03:00"
+    created: "2020-06-09T14:22:03.174124+03:00"
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
@@ -93,7 +111,7 @@ entries:
     version: 0.1.11
   - apiVersion: v1
     appVersion: 1.10.0
-    created: "2020-05-11T13:14:35.82267+03:00"
+    created: "2020-06-09T14:22:03.170588+03:00"
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
@@ -111,7 +129,7 @@ entries:
     version: 0.1.10
   - apiVersion: v1
     appVersion: 1.10.0
-    created: "2020-05-11T13:14:35.865433+03:00"
+    created: "2020-06-09T14:22:03.219794+03:00"
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
@@ -129,7 +147,7 @@ entries:
     version: 0.1.9
   - apiVersion: v1
     appVersion: 1.10.0
-    created: "2020-05-11T13:14:35.860889+03:00"
+    created: "2020-06-09T14:22:03.214266+03:00"
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
@@ -147,7 +165,7 @@ entries:
     version: 0.1.8
   - apiVersion: v1
     appVersion: 1.10.0
-    created: "2020-05-11T13:14:35.857869+03:00"
+    created: "2020-06-09T14:22:03.210147+03:00"
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
@@ -165,7 +183,7 @@ entries:
     version: 0.1.7
   - apiVersion: v1
     appVersion: 1.10.0
-    created: "2020-05-11T13:14:35.85464+03:00"
+    created: "2020-06-09T14:22:03.206057+03:00"
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
@@ -183,7 +201,7 @@ entries:
     version: 0.1.6
   - apiVersion: v1
     appVersion: 1.10.0
-    created: "2020-05-11T13:14:35.851123+03:00"
+    created: "2020-06-09T14:22:03.201793+03:00"
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
@@ -201,7 +219,7 @@ entries:
     version: 0.1.5
   - apiVersion: v1
     appVersion: 1.9.1
-    created: "2020-05-11T13:14:35.848033+03:00"
+    created: "2020-06-09T14:22:03.198546+03:00"
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
@@ -218,7 +236,7 @@ entries:
     version: 0.1.4
   - apiVersion: v1
     appVersion: 1.9.1
-    created: "2020-05-11T13:14:35.844767+03:00"
+    created: "2020-06-09T14:22:03.195371+03:00"
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
@@ -230,4 +248,4 @@ entries:
     urls:
     - flink-0.1.3.tgz
     version: 0.1.3
-generated: "2020-05-11T13:14:35.818058+03:00"
+generated: "2020-06-09T14:22:03.165438+03:00"
