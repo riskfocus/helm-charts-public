@@ -287,3 +287,22 @@ zookeeper:
       memory: 1256Mi
   persistence:
     enabled: true
+
+#secret:
+#  secrets:
+#    - name: kerberos
+#      mountPath: /kerberos
+#    - name: kafka-ssl
+#      mountPath: /etc/certs
+#  sealedSecrets:
+#    # The encrypted raw file sealed secrets generated for example with
+#    # kubeseal --raw --from-file=... --controller-name sealed-secrets --scope namespace-wide
+#    sealedSecretFiles:
+#      file1: ...
+#      file2: ...
+#    sealedSecretFilesPath: /etc/sealed
+#    # The encrypted raw env sealed secrets generated for example with
+#    # echo -n password | kubeseal --raw --from-file=/dev/stdin --controller-name sealed-secrets --scope namespace-wide
+#    sealedSecretEnvs:
+#      env1: ...
+#      env2: ...
