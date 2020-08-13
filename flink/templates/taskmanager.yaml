@@ -73,10 +73,10 @@ spec:
           {{- toYaml .Values.taskmanager.extraEnvs | nindent 12 }}
           {{- end }}
           envFrom:
-            {{- if .Values.secret.sealedSecrets.sealedSecretEnvs }}
+          {{- if and .Values.secrets.bitnamiSealedSecrets.enabled .Values.secrets.bitnamiSealedSecrets.sealedSecretEnvs }}
             - secretRef:
                 name: {{ .Release.Name }}-secretenvs
-            {{- end }}
+          {{- end }}
           ports:
           {{- range $name, $port := .Values.taskmanager.ports }}
             - containerPort: {{ $port }}
@@ -98,7 +98,7 @@ spec:
             - name: taskmanager-data
               mountPath: {{ .Values.taskmanager.persistent.mountPath }}
           {{- end }}
-          {{- range $secret := .Values.secret.secrets }}
+          {{- range $secret := .Values.secrets.kubernetesSecrets }}
             {{- if $secret.mountPath }}
               {{- if $secret.keys }}
                 {{- range $key := $secret.keys }}
@@ -117,9 +117,9 @@ spec:
           {{- if .Values.taskmanager.extraVolumeMounts -}}
             {{ toYaml .Values.taskmanager.extraVolumeMounts | nindent 12 }}
           {{- end }}
-          {{- if .Values.secret.sealedSecrets.sealedSecretFilesPath }}
+          {{- if and (and .Values.secrets.bitnamiSealedSecrets.enabled .Values.secrets.bitnamiSealedSecrets.sealedSecretFiles) .Values.secrets.bitnamiSealedSecrets.sealedSecretFilesPath }}
             - name: sealed-secret-files
-              mountPath: {{ .Values.secret.sealedSecrets.sealedSecretFilesPath }}
+              mountPath: {{ .Values.secrets.bitnamiSealedSecrets.sealedSecretFilesPath }}
           {{- end }}
           resources:
             {{- toYaml .Values.taskmanager.resources | nindent 12 }}
@@ -139,7 +139,7 @@ spec:
               - key: masters
                 path: masters
               {{- end }}
-      {{- range .Values.secret.secrets }}
+      {{- range .Values.secrets.kubernetesSecrets }}
         - name: {{ include "flink.fullname" $ }}-{{ .name }}
           secret:
             secretName: {{ .name }}
@@ -147,7 +147,7 @@ spec:
       {{- if .Values.taskmanager.extraVolumes -}}
         {{ toYaml .Values.taskmanager.extraVolumes | nindent 8 }}
       {{- end }}
-      {{- if .Values.secret.sealedSecrets.sealedSecretFilesPath }}
+      {{- if and (and .Values.secrets.bitnamiSealedSecrets.enabled .Values.secrets.bitnamiSealedSecrets.sealedSecretFiles) .Values.secrets.bitnamiSealedSecrets.sealedSecretFilesPath }}
         - name: sealed-secret-files
           secret:
             secretName: {{ .Release.Name }}-secretfiles

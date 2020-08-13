@@ -288,21 +288,25 @@ zookeeper:
   persistence:
     enabled: true
 
-#secret:
-#  secrets:
+secrets:
+#  Example of plain predefined secrets
+#  kubernetesSecrets:
 #    - name: kerberos
 #      mountPath: /kerberos
-#    - name: kafka-ssl
-#      mountPath: /etc/certs
-#  sealedSecrets:
-#    # The encrypted raw file sealed secrets generated for example with
-#    # kubeseal --raw --from-file=... --controller-name sealed-secrets --scope namespace-wide
-#    sealedSecretFiles:
-#      file1: ...
-#      file2: ...
-#    sealedSecretFilesPath: /etc/sealed
-#    # The encrypted raw env sealed secrets generated for example with
-#    # echo -n password | kubeseal --raw --from-file=/dev/stdin --controller-name sealed-secrets --scope namespace-wide
-#    sealedSecretEnvs:
-#      env1: ...
-#      env2: ...
+  bitnamiSealedSecrets:
+    enabled: false
+    # The encrypted raw file sealed secrets generated for example with
+    # kubeseal --raw --from-file=... --controller-name sealed-secrets --scope namespace-wide
+    sealedSecretFiles:
+      file1:
+      file2:
+    sealedSecretFilesPath: /etc/sealed
+    sealedSecretFilesAnnotations:
+      sealedsecrets.bitnami.com/namespace-wide: true
+    # The encrypted raw env sealed secrets generated for example with
+    # echo -n password | kubeseal --raw --from-file=/dev/stdin --controller-name sealed-secrets --scope namespace-wide
+    sealedSecretEnvs:
+      env1:
+      env2:
+    sealedSecretEnvsAnnotations:
+      sealedsecrets.bitnami.com/namespace-wide: true

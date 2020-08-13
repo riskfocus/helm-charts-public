@@ -77,10 +77,10 @@ spec:
           {{- toYaml .Values.jobmanager.extraEnvs | nindent 12 }}
           {{- end }}
           envFrom:
-            {{- if .Values.secret.sealedSecrets.sealedSecretEnvs }}
+          {{- if and .Values.secrets.bitnamiSealedSecrets.enabled .Values.secrets.bitnamiSealedSecrets.sealedSecretEnvs }}
             - secretRef:
                 name: {{ .Release.Name }}-secretenvs
-            {{- end }}
+          {{- end }}
           ports:
           {{- range $name, $port := .Values.jobmanager.ports }}
             - containerPort: {{ $port }}
@@ -123,7 +123,7 @@ spec:
               mountPath: {{ .Values.flink.workDir }}/conf/masters
               subPath: masters
               {{- end }}
-          {{- range $secret := .Values.secret.secrets }}
+          {{- range $secret := .Values.secrets.kubernetesSecrets }}
             {{- if $secret.mountPath }}
               {{- if $secret.keys }}
                 {{- range $key := $secret.keys }}
@@ -146,9 +146,9 @@ spec:
             - name: jobmanager-data
               mountPath: {{ .Values.jobmanager.persistent.mountPath }}
           {{- end }}
-          {{- if .Values.secret.sealedSecrets.sealedSecretFilesPath }}
+          {{- if and (and .Values.secrets.bitnamiSealedSecrets.enabled .Values.secrets.bitnamiSealedSecrets.sealedSecretFiles) .Values.secrets.bitnamiSealedSecrets.sealedSecretFilesPath }}
             - name: sealed-secret-files
-              mountPath: {{ .Values.secret.sealedSecrets.sealedSecretFilesPath }}
+              mountPath: {{ .Values.secrets.bitnamiSealedSecrets.sealedSecretFilesPath }}
           {{- end }}
           resources:
             {{- toYaml .Values.jobmanager.resources | nindent 12 }}
@@ -168,7 +168,7 @@ spec:
               - key: masters
                 path: masters
               {{- end }}
-      {{- range .Values.secret.secrets }}
+      {{- range .Values.secrets.kubernetesSecrets }}
         - name: {{ include "flink.fullname" $ }}-{{ .name }}
           secret:
             secretName: {{ .name }}
@@ -176,7 +176,7 @@ spec:
       {{- if .Values.jobmanager.extraVolumes -}}
         {{ toYaml .Values.jobmanager.extraVolumes | nindent 8 }}
       {{- end }}
-      {{- if .Values.secret.sealedSecrets.sealedSecretFilesPath }}
+      {{- if and (and .Values.secrets.bitnamiSealedSecrets.enabled .Values.secrets.bitnamiSealedSecrets.sealedSecretFiles) .Values.secrets.bitnamiSealedSecrets.sealedSecretFilesPath }}
         - name: sealed-secret-files
           secret:
             secretName: {{ .Release.Name }}-secretfiles
