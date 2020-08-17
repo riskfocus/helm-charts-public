@@ -289,7 +289,7 @@ zookeeper:
     enabled: true
 
 secrets:
-#  Example of plain predefined secrets
+#  Plain predefined secrets example
 #  kubernetesSecrets:
 #    - name: kerberos
 #      mountPath: /kerberos
@@ -297,16 +297,16 @@ secrets:
     enabled: false
     # The encrypted raw file sealed secrets generated for example with
     # kubeseal --raw --from-file=... --controller-name sealed-secrets --scope namespace-wide
-    sealedSecretFiles:
-      file1:
-      file2:
+    sealedSecretFiles: {}
+    # file1: encypted_file1
+    # file2: encypted_file2
     sealedSecretFilesPath: /etc/sealed
     sealedSecretFilesAnnotations:
       sealedsecrets.bitnami.com/namespace-wide: true
     # The encrypted raw env sealed secrets generated for example with
     # echo -n password | kubeseal --raw --from-file=/dev/stdin --controller-name sealed-secrets --scope namespace-wide
-    sealedSecretEnvs:
-      env1:
-      env2:
+    sealedSecretEnvs: {}
+    # env1: encypted_env1
+    # env2: encypted_env2
     sealedSecretEnvsAnnotations:
       sealedsecrets.bitnami.com/namespace-wide: true
