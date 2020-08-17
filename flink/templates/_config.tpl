@@ -2,14 +2,14 @@
 ServiceAccount for Jobmanager
 */}}
 {{- define "jobmanager.serviceAccount" -}}
-{{ default "jobmanager" .Values.jobmanager.serviceAccount.name }}
+{{ default ( printf "%s-jobmanager" ( include "flink.fullname" . ) ) .Values.jobmanager.serviceAccount.name }}
 {{- end -}}
 
 {{/*
 ServiceAccount for Taskmanager
 */}}
 {{- define "taskmanager.serviceAccount" -}}
-{{ default "taskmanager" .Values.taskmanager.serviceAccount.name }}
+{{ default ( printf "%s-taskmanager" ( include "flink.fullname" . ) ) .Values.taskmanager.serviceAccount.name }}
 {{- end -}}
 
 {{/*
