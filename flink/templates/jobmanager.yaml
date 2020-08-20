@@ -76,6 +76,11 @@ spec:
           {{- if .Values.jobmanager.extraEnvs }}
           {{- toYaml .Values.jobmanager.extraEnvs | nindent 12 }}
           {{- end }}
+          envFrom:
+          {{- if and .Values.secrets.bitnamiSealedSecrets.enabled .Values.secrets.bitnamiSealedSecrets.sealedSecretEnvs }}
+            - secretRef:
+                name: {{ .Release.Name }}-secretenvs
+          {{- end }}
           ports:
           {{- range $name, $port := .Values.jobmanager.ports }}
             - containerPort: {{ $port }}
@@ -118,9 +123,32 @@ spec:
               mountPath: {{ .Values.flink.workDir }}/conf/masters
               subPath: masters
               {{- end }}
+          {{- range $secret := .Values.secrets.kubernetesSecrets }}
+            {{- if $secret.mountPath }}
+              {{- if $secret.keys }}
+                {{- range $key := $secret.keys }}
+            - name: {{ include "flink.fullname" $ }}-{{ $secret.name }}
+              mountPath: {{ $secret.mountPath }}/{{ $key }}
+              subPath: {{ $key }}
+              readOnly: true
+                {{- end }}
+              {{- else }}
+            - name: {{ include "flink.fullname" $ }}-{{ $secret.name }}
+              mountPath: {{ $secret.mountPath }}
+              readOnly: true
+              {{- end }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.jobmanager.extraVolumeMounts -}}
+            {{ toYaml .Values.jobmanager.extraVolumeMounts | nindent 12 }}
+          {{- end }}
           {{- if and .Values.jobmanager.persistent.enabled .Values.jobmanager.statefulset }}
             - name: jobmanager-data
               mountPath: {{ .Values.jobmanager.persistent.mountPath }}
+          {{- end }}
+          {{- if and (and .Values.secrets.bitnamiSealedSecrets.enabled .Values.secrets.bitnamiSealedSecrets.sealedSecretFiles) .Values.secrets.bitnamiSealedSecrets.sealedSecretFilesPath }}
+            - name: sealed-secret-files
+              mountPath: {{ .Values.secrets.bitnamiSealedSecrets.sealedSecretFilesPath }}
           {{- end }}
           resources:
             {{- toYaml .Values.jobmanager.resources | nindent 12 }}
@@ -140,6 +168,19 @@ spec:
               - key: masters
                 path: masters
               {{- end }}
+      {{- range .Values.secrets.kubernetesSecrets }}
+        - name: {{ include "flink.fullname" $ }}-{{ .name }}
+          secret:
+            secretName: {{ .name }}
+      {{- end }}
+      {{- if .Values.jobmanager.extraVolumes -}}
+        {{ toYaml .Values.jobmanager.extraVolumes | nindent 8 }}
+      {{- end }}
+      {{- if and (and .Values.secrets.bitnamiSealedSecrets.enabled .Values.secrets.bitnamiSealedSecrets.sealedSecretFiles) .Values.secrets.bitnamiSealedSecrets.sealedSecretFilesPath }}
+        - name: sealed-secret-files
+          secret:
+            secretName: {{ .Release.Name }}-secretfiles
+      {{- end }}
 
       {{- with .Values.jobmanager.nodeSelector }}
       nodeSelector:
