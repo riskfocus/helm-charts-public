@@ -14,6 +14,8 @@ data:
 {{ include "flink.configuration" . | indent 4 }}
   log4j.properties: |+
 {{ .Values.flink.logging.log4j_properties | indent 4 }}
+  log4j-cli.properties: |+
+{{ .Values.flink.logging.log4j_cli_properties | indent 4 }}
   security.properties:
     # The java-level namelookup cache policy for successful lookups
     networkaddress.cache.ttl=30
