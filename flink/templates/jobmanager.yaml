@@ -116,6 +116,9 @@ spec:
               mountPath: {{ .Values.flink.workDir }}/conf/log4j.properties
               subPath: log4j.properties
             - name: flink-config-volume
+              mountPath: {{ .Values.flink.workDir }}/conf/log4j-console.properties
+              subPath: log4j.properties
+            - name: flink-config-volume
               mountPath: {{ .Values.flink.workDir }}/conf/security.properties
               subPath: security.properties
               {{- if .Values.jobmanager.highAvailability.enabled }}

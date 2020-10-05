@@ -133,6 +133,8 @@ spec:
                 path: flink-conf.yaml
               - key: log4j.properties
                 path: log4j.properties
+              - key: log4j-console.properties
+                path: log4j.properties
               - key: security.properties
                 path: security.properties
               {{- if .Values.jobmanager.highAvailability.enabled }}
