@@ -7,27 +7,47 @@ fullnameOverride: ""
 
 image:
   repository: flink
-  tag: 1.10.1-scala_2.12
+  tag: 1.11.2-scala_2.12
   pullPolicy: IfNotPresent
 imagePullSecrets: []
 
 # For general configuration
 flink:
-  # logging
+  # logging, log4j configuration copied from Flink distribution
   logging:
     log4j_properties: |+
-      log4j.rootLogger=INFO, file
-      log4j.logger.akka=WARN
-      log4j.logger.org.apache.kafka=WARN
-      log4j.logger.org.apache.kafka.clients.producer.ProducerConfig=WARN
-      log4j.logger.org.apache.kafka.clients.consumer.ConsumerConfig=WARN
-      log4j.logger.org.apache.hadoop=INFO
-      log4j.logger.org.apache.zookeeper=INFO
-      log4j.appender.file=org.apache.log4j.FileAppender
-      log4j.appender.file.file=${log.file}
-      log4j.appender.file.layout=org.apache.log4j.PatternLayout
-      log4j.appender.file.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %-60c %x - %m%n
-      log4j.logger.org.apache.flink.shaded.akka.org.jboss.netty.channel.DefaultChannelPipeline=ERROR, file
+
+      # This affects logging for both user code and Flink
+      rootLogger.level = INFO
+      rootLogger.appenderRef.file.ref = MainAppender
+
+      # Uncomment this if you want to _only_ change Flink's logging
+      #logger.flink.name = org.apache.flink
+      #logger.flink.level = INFO
+
+      # The following lines keep the log level of common libraries/connectors on
+      # log level INFO. The root logger does not override this. You have to manually
+      # change the log levels here.
+      logger.akka.name = akka
+      logger.akka.level = INFO
+      logger.kafka.name= org.apache.kafka
+      logger.kafka.level = INFO
+      logger.hadoop.name = org.apache.hadoop
+      logger.hadoop.level = INFO
+      logger.zookeeper.name = org.apache.zookeeper
+      logger.zookeeper.level = INFO
+
+      # Log all infos in the given file
+      appender.main.name = MainAppender
+      appender.main.type = File
+      appender.main.append = false
+      appender.main.fileName = ${sys:log.file}
+      appender.main.layout.type = PatternLayout
+      appender.main.layout.pattern = %d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %-60c %x - %m%n
+
+      # Suppress the irrelevant (wrong) warnings from the Netty channel handler
+      logger.netty.name = org.apache.flink.shaded.akka.org.jboss.netty.channel.DefaultChannelPipeline
+      logger.netty.level = OFF
     # monitoring is exporting metrics in Prometheus format
   monitoring:
     enabled: true
@@ -115,8 +135,8 @@ jobmanager:
       $FLINK_HOME/bin/jobmanager.sh start;
       while :;
       do
-      if [[ -f $(find log -name '*jobmanager*.log' -print -quit) ]];
-      then tail -f -n +1 log/*jobmanager*.log;
+      if [[ -f $(find log -name '*taskexecutor*.log' -print -quit) ]];
+      then tail -f -n +1 log/*taskexecutor*.log;
       fi;
       done
   # Additional param for JVM to support security.properties override
@@ -140,8 +160,7 @@ jobmanager:
   #      cpu: 3800m
   #      memory: 8000Mi
   additionalCommand: >-
-    cp /opt/flink/opt/flink-metrics-prometheus-*.jar
-    /opt/flink/opt/flink-s3-fs-presto-*.jar
+    cp /opt/flink/opt/flink-s3-fs-presto-*.jar
     /opt/flink/lib/ &&
     wget https://repo1.maven.org/maven2/com/github/oshi/oshi-core/3.4.0/oshi-core-3.4.0.jar
     -O /opt/flink/lib/oshi-core-3.4.0.jar &&
@@ -154,8 +173,8 @@ jobmanager:
     $FLINK_HOME/bin/jobmanager.sh start;
     while :;
     do
-    if [[ -f $(find log -name '*jobmanager*.log' -print -quit) ]];
-    then tail -f -n +1 log/*jobmanager*.log;
+    if [[ -f $(find log -name '*standalonesession*.log' -print -quit) ]];
+    then tail -f -n +1 log/*standalonesession*.log;
     fi;
     done
   service:
