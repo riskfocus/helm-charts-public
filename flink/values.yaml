@@ -237,8 +237,7 @@ taskmanager:
   #      cpu: 3800m
   #      memory: 8000Mi
   additionalCommand: >-
-    cp /opt/flink/opt/flink-metrics-prometheus-*.jar
-    /opt/flink/opt/flink-s3-fs-presto-*.jar
+    cp /opt/flink/opt/flink-s3-fs-presto-*.jar
     /opt/flink/lib/ &&
     wget https://repo1.maven.org/maven2/com/github/oshi/oshi-core/3.4.0/oshi-core-3.4.0.jar
     -O /opt/flink/lib/oshi-core-3.4.0.jar &&
