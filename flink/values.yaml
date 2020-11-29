@@ -189,9 +189,10 @@ jobmanager:
       annotations: {}
   nodeSelector: {}
   affinity: {}
-  tolerations: {}
+  tolerations: []
   persistent:
     enabled: false
+    # https://kubernetes.io/docs/concepts/storage/persistent-volumes/#class-1
     storageClass:
     size: 8Gi
     mountPath: "/flink_state"
@@ -256,9 +257,10 @@ taskmanager:
     type: ClusterIP
   nodeSelector: {}
   affinity: {}
-  tolerations: {}
+  tolerations: []
   persistent:
     enabled: false
+    # https://kubernetes.io/docs/concepts/storage/persistent-volumes/#class-1
     storageClass:
     size: 8Gi
     mountPath: "/flink_state"
