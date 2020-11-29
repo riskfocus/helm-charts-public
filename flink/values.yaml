@@ -206,6 +206,7 @@ jobmanager:
     # The name of the ServiceAccount to use.
     # If not set and create is true, a name is generated using the fullname template
     name:
+    annotations: {}
   #livenessProbe will conduct checks for rpc port as tcpSocket probe
   livenessProbe:
     initialDelaySeconds: 10
@@ -273,6 +274,7 @@ taskmanager:
     # The name of the ServiceAccount to use.
     # If not set and create is true, a name is generated using the fullname template
     name:
+    annotations: {}
   #livenessProbe will conduct checks for rpc port as tcpSocket probe
   livenessProbe:
     initialDelaySeconds: 30
