@@ -7,7 +7,7 @@ entries:
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
-      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      repository: https://charts.helm.sh/incubator
       version: 2.0.0
     description: Chart for Apache Flink
     digest: 8f1552b61663fb498dea9c6993ad4aaec38d162c4b05462244ecd1c25f28858d
@@ -25,7 +25,7 @@ entries:
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
-      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      repository: https://charts.helm.sh/incubator
       version: 2.0.0
     description: Chart for Apache Flink
     digest: 3fbca7763556d6b2a6199e1141088e93b841e64a3ac34b9c3e11fab0fb27d635
@@ -43,7 +43,7 @@ entries:
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
-      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      repository: https://charts.helm.sh/incubator
       version: 2.0.0
     description: Chart for Apache Flink
     digest: bf57a776d68319946186410e67629fa9dc1e4a8d4f84ebd2373ec032ae876471
@@ -61,7 +61,7 @@ entries:
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
-      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      repository: https://charts.helm.sh/incubator
       version: 2.0.0
     description: Chart for Apache Flink
     digest: 9b74fb9e578de9bd59633144c17440b2a5d3b68eaa330115db9c52f1afb3984e
@@ -79,7 +79,7 @@ entries:
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
-      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      repository: https://charts.helm.sh/incubator
       version: 2.0.0
     description: Chart for Apache Flink
     digest: ac1caad6c89dc769141d02573714dee1715cfefda76da3a6ae2c1eace49bd02f
@@ -97,7 +97,7 @@ entries:
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
-      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      repository: https://charts.helm.sh/incubator
       version: 2.0.0
     description: Chart for Apache Flink
     digest: 5a295afe902d8c8851c0a40b73cfbffc8fdca7e80a939749cc25c78745f8a596
@@ -115,7 +115,7 @@ entries:
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
-      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      repository: https://charts.helm.sh/incubator
       version: 2.0.0
     description: Chart for Apache Flink
     digest: 3608517d48951dff4a48ef864f1eb68b53dc380f0945f64714f9454cd8660b29
@@ -133,7 +133,7 @@ entries:
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
-      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      repository: https://charts.helm.sh/incubator
       version: 2.0.0
     description: Chart for Apache Flink
     digest: 0f9061e86834f6b6653928eea505f0812824b6dfb9aad0fbf01b88b0a510fd14
@@ -151,7 +151,7 @@ entries:
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
-      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      repository: https://charts.helm.sh/incubator
       version: 2.0.0
     description: Chart for Apache Flink
     digest: 3523f76507e68bcd7d79aeb0bbd674dadea8df9e0219e93fb25a4c95e5cd170d
@@ -169,7 +169,7 @@ entries:
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
-      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      repository: https://charts.helm.sh/incubator
       version: 2.0.0
     description: Chart for Apache Flink
     digest: 5f0fee8acf2bc42f14887b7e41ddd75924cfd14787b828091a32ca4d48e576e3
@@ -187,7 +187,7 @@ entries:
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
-      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      repository: https://charts.helm.sh/incubator
       version: 2.0.0
     description: Chart for Apache Flink
     digest: 2f5d762b569990681854bc0929b464bb32238ebf9cce7c935ff66a64916d5bb0
@@ -205,7 +205,7 @@ entries:
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
-      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      repository: https://charts.helm.sh/incubator
       version: 2.0.0
     description: Chart for Apache Flink
     digest: 5737d1376b2aa23639dc19dc4ca58aebf7fc5e4e743046dcf3d2b3377f10d18d
@@ -223,7 +223,7 @@ entries:
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
-      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      repository: https://charts.helm.sh/incubator
       version: 2.0.0
     description: Chart for Apache Flink
     digest: 1456bb9f756465a6ed46c450b4697611eda1294f6fee90157ebf2c278e42c8bc
@@ -241,7 +241,7 @@ entries:
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
-      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      repository: https://charts.helm.sh/incubator
       version: 2.0.0
     description: Chart for Apache Flink
     digest: 620b68b9f9304ae28334ff584f0b3ffda04bdf97802ab828f8d3acaca4326003
@@ -259,7 +259,7 @@ entries:
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
-      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      repository: https://charts.helm.sh/incubator
       version: 2.0.0
     description: Chart for Apache Flink
     digest: d0f20cb057c29f3b4e954307be61d4ff57d7cf4ddd16b42d5bec62573754c4bc
@@ -276,7 +276,7 @@ entries:
     dependencies:
     - condition: zookeeper.enabled
       name: zookeeper
-      repository: https://kubernetes-charts-incubator.storage.googleapis.com
+      repository: https://charts.helm.sh/incubator
       version: 2.0.0
     description: Chart for Apache Flink
     digest: 3bbde2e93832769fc8f2532cd3703747121e4907fa8e4b0d54744444aeee24a3

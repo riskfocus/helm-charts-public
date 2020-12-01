@@ -1,6 +1,6 @@
 dependencies:
   - name:       "zookeeper"
     version:    "2.0.0"
-    repository: "https://kubernetes-charts-incubator.storage.googleapis.com"
+    repository: "https://charts.helm.sh/incubator"
     condition:  "zookeeper.enabled"
 
