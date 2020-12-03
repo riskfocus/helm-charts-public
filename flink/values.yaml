@@ -16,15 +16,15 @@ flink:
   # logging, log4j configuration copied from Flink distribution
   logging:
     log4j_properties: |+
-
       # This affects logging for both user code and Flink
       rootLogger.level = INFO
-      rootLogger.appenderRef.file.ref = MainAppender
-
+      rootLogger.appenderRef.console.ref = ConsoleAppender
+      rootLogger.appenderRef.rolling.ref = RollingFileAppender
+      
       # Uncomment this if you want to _only_ change Flink's logging
       #logger.flink.name = org.apache.flink
       #logger.flink.level = INFO
-
+      
       # The following lines keep the log level of common libraries/connectors on
       # log level INFO. The root logger does not override this. You have to manually
       # change the log levels here.
@@ -36,19 +36,32 @@ flink:
       logger.hadoop.level = INFO
       logger.zookeeper.name = org.apache.zookeeper
       logger.zookeeper.level = INFO
-
-      # Log all infos in the given file
-      appender.main.name = MainAppender
-      appender.main.type = File
-      appender.main.append = false
-      appender.main.fileName = ${sys:log.file}
-      appender.main.layout.type = PatternLayout
-      appender.main.layout.pattern = %d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %-60c %x - %m%n
-
+      
+      # Log all infos to the console
+      appender.console.name = ConsoleAppender
+      appender.console.type = CONSOLE
+      appender.console.layout.type = PatternLayout
+      appender.console.layout.pattern = %d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %-60c %x - %m%n
+      
+      # Log all infos in the given rolling file
+      appender.rolling.name = RollingFileAppender
+      appender.rolling.type = RollingFile
+      appender.rolling.append = false
+      appender.rolling.fileName = ${sys:log.file}
+      appender.rolling.filePattern = ${sys:log.file}.%i
+      appender.rolling.layout.type = PatternLayout
+      appender.rolling.layout.pattern = %d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %-60c %x - %m%n
+      appender.rolling.policies.type = Policies
+      appender.rolling.policies.size.type = SizeBasedTriggeringPolicy
+      appender.rolling.policies.size.size=100MB
+      appender.rolling.strategy.type = DefaultRolloverStrategy
+      appender.rolling.strategy.max = 10
+      
       # Suppress the irrelevant (wrong) warnings from the Netty channel handler
       logger.netty.name = org.apache.flink.shaded.akka.org.jboss.netty.channel.DefaultChannelPipeline
       logger.netty.level = OFF
-    # monitoring is exporting metrics in Prometheus format
+
+  # monitoring is exporting metrics in Prometheus format
   monitoring:
     enabled: true
     # port for metrics
@@ -132,13 +145,7 @@ jobmanager:
     command: >-
       sed 's/REPLACE_HOSTNAME/'${FLINK_POD_IP}'/'
       $FLINK_HOME/conf/flink-conf.yaml.tpl > $FLINK_HOME/conf/flink-conf.yaml &&
-      $FLINK_HOME/bin/jobmanager.sh start;
-      while :;
-      do
-      if [[ -f $(find log -name '*taskexecutor*.log' -print -quit) ]];
-      then tail -f -n +1 log/*taskexecutor*.log;
-      fi;
-      done
+      $FLINK_HOME/bin/jobmanager.sh start-foreground;
   # Additional param for JVM to support security.properties override
   # check configMap for more information
   jvmArgs: "-Djava.security.properties={{ .Values.flink.workDir }}/conf/security.properties"
@@ -170,13 +177,7 @@ jobmanager:
     -O /opt/flink/lib/jna-platform-5.4.0.jar
   command: >-
     cp $FLINK_HOME/conf/flink-conf.yaml.tpl $FLINK_HOME/conf/flink-conf.yaml &&
-    $FLINK_HOME/bin/jobmanager.sh start;
-    while :;
-    do
-    if [[ -f $(find log -name '*standalonesession*.log' -print -quit) ]];
-    then tail -f -n +1 log/*standalonesession*.log;
-    fi;
-    done
+    $FLINK_HOME/bin/jobmanager.sh start-foreground;
   service:
     type: ClusterIP
     annotations: {}
@@ -246,13 +247,7 @@ taskmanager:
     wget https://repo1.maven.org/maven2/net/java/dev/jna/jna-platform/5.4.0/jna-platform-5.4.0.jar
     -O /opt/flink/lib/jna-platform-5.4.0.jar
   command: >-
-    $FLINK_HOME/bin/taskmanager.sh start;
-    while :;
-    do
-    if [[ -f $(find log -name '*taskmanager*.log' -print -quit) ]];
-    then tail -f -n +1 log/*taskmanager*.log;
-    fi;
-    done
+    $FLINK_HOME/bin/taskmanager.sh start-foreground;
   service:
     type: ClusterIP
   nodeSelector: {}
