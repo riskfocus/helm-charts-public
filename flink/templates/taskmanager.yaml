@@ -69,7 +69,7 @@ spec:
           {{- if .Values.extraEnvs }}
           {{- toYaml .Values.extraEnvs | nindent 12 }}
           {{- end }}
-          {{- if .Values.jobmanager.extraEnvs }}
+          {{- if .Values.taskmanager.extraEnvs }}
           {{- toYaml .Values.taskmanager.extraEnvs | nindent 12 }}
           {{- end }}
           envFrom:
