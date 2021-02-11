@@ -91,8 +91,8 @@ $ helm install --name my-flink riskfoucs/flink --set jobmanager.highAvailability
   https://ci.apache.org/projects/flink/flink-docs-stable/ops/config.html#high-availability-storagedir
 
 
+### Save points and Check points
 
+Flink's application checkpoint should be application managed as per  https://ci.apache.org/projects/flink/flink-docs-release-1.12/ops/state/checkpoints.html
 
-
-
---set jobmanager.highAvailability.storageDir=s3p://rf-flink-cluster-us-e-destination-s3/flink_state/recovery,state.checkpoints.dir=s3p://rf-flink-cluster-us-e-destination-s3/flink_state/checkpoints,state.savepoints.dir=s3p://rf-flink-cluster-us-e-destination-s3/flink_state/savepoints
+It is possible to take save points via the Flink Rest Api or using the flink command line.
