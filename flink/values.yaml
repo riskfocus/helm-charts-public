@@ -7,7 +7,7 @@ fullnameOverride: ""
 
 image:
   repository: flink
-  tag: 1.11.2-scala_2.12
+  tag: 1.12.1-scala_2.12-java11
   pullPolicy: IfNotPresent
 imagePullSecrets: []
 
@@ -83,19 +83,19 @@ flink:
   params: ""
   state:
     # backend for state. Available options: filesystem, rocksdb, memory; empty - for default(memory)
-    backend:
+    backend: filesystem
     # These values are default excludes file pathes
     # https://ci.apache.org/projects/flink/flink-docs-stable/dev/stream/state/checkpointing.html#related-config-options
     params: |+
-      state.checkpoints.dir: file:///flink_state/checkpoints
-      state.savepoints.dir: file:///flink_state/savepoints
+      state.checkpoints.dir: s3p://<s3_bucket>/flink_state/checkpoints
+      state.savepoints.dir: s3p://<s3_bucket>/flink_state/savepoints
       state.backend.async: true
       state.backend.fs.memory-threshold: 1024
       state.backend.fs.write-buffer-size: 4096
       state.backend.incremental: false
       state.backend.local-recovery: false
-      state.checkpoints.num-retained: 1
-      taskmanager.state.local.root-dirs: file:///flink_state/local-recovery
+      state.checkpoints.num-retained: 30
+      taskmanager.state.local.root-dirs: s3p://<s3_bucket>/flink_state/local-recovery
     # https://ci.apache.org/projects/flink/flink-docs-stable/ops/state/state_backends.html#rocksdb-state-backend-config-options
     # * state.backend.rocksdb.localdir doesn't have a prefix - file://
     rocksdb: |+
@@ -129,13 +129,13 @@ jobmanager:
   # highAvailability configuration based on zookeeper
   highAvailability:
     # enabled also will enable zookeeper Dependency
-    enabled: false
+    enabled: true
     zookeeperConnect: "{{ .Release.Name }}-zookeeper:{{ .Values.zookeeper.env.ZOO_PORT }}"
     zookeeperRootPath: /flink
-    clusterId: /flink
+    clusterId: <cluster-id>
     # storageDir for Jobmanagers. DFS expected.
     # Docs - Storage directory (required): JobManager metadata is persisted in the file system storageDir and only a pointer to this state is stored in ZooKeeper
-    storageDir:
+    storageDir: s3p://<s3_bucket>/flink_state/recovery
     # syncPort is a rpc port in HA configuration
     syncPort: 6150
     # command for HA configuration
@@ -156,7 +156,7 @@ jobmanager:
     # blob port uses for Liveness probe
     blob: 6124
     ui: 8081
-  replicaCount: 1
+  replicaCount: 2
   # heapSize params for Jobmanager
   # keep in mind that Flink can use offheap memory
   # e.g. in case of checkpoint usage
@@ -167,8 +167,11 @@ jobmanager:
   #      cpu: 3800m
   #      memory: 8000Mi
   additionalCommand: >-
-    cp /opt/flink/opt/flink-s3-fs-presto-*.jar
-    /opt/flink/lib/ &&
+    apt-get update && 
+    apt-get -y install awscli &&
+    mkdir -p /opt/flink/plugins/s3-fs-presto/ &&
+    cp /opt/flink/opt/flink-s3-fs-presto-1.12.1.jar /opt/flink/lib/flink-s3-fs-presto-1.12.1.jar &&
+    cp /opt/flink/opt/flink-s3-fs-presto-1.12.1.jar /opt/flink/plugins/s3-fs-presto/flink-s3-fs-presto-1.12.1.jar &&
     wget https://repo1.maven.org/maven2/com/github/oshi/oshi-core/3.4.0/oshi-core-3.4.0.jar
     -O /opt/flink/lib/oshi-core-3.4.0.jar &&
     wget https://repo1.maven.org/maven2/net/java/dev/jna/jna/5.4.0/jna-5.4.0.jar
@@ -179,8 +182,9 @@ jobmanager:
     cp $FLINK_HOME/conf/flink-conf.yaml.tpl $FLINK_HOME/conf/flink-conf.yaml &&
     $FLINK_HOME/bin/jobmanager.sh start-foreground;
   service:
-    type: ClusterIP
-    annotations: {}
+    type: LoadBalancer
+    annotations: 
+      service.beta.kubernetes.io/aws-load-balancer-internal: "true"
     # rest is additional service which exposes only HTTP port
     # can be using for cases of using exposeController
     rest:
@@ -238,8 +242,11 @@ taskmanager:
   #      cpu: 3800m
   #      memory: 8000Mi
   additionalCommand: >-
-    cp /opt/flink/opt/flink-s3-fs-presto-*.jar
-    /opt/flink/lib/ &&
+    apt-get update && 
+    apt-get -y install awscli &&
+    mkdir -p /opt/flink/plugins/s3-fs-presto/ &&
+    cp /opt/flink/opt/flink-s3-fs-presto-1.12.1.jar /opt/flink/lib/flink-s3-fs-presto-1.12.1.jar &&
+    cp /opt/flink/opt/flink-s3-fs-presto-1.12.1.jar /opt/flink/plugins/s3-fs-presto/flink-s3-fs-presto-1.12.1.jar &&
     wget https://repo1.maven.org/maven2/com/github/oshi/oshi-core/3.4.0/oshi-core-3.4.0.jar
     -O /opt/flink/lib/oshi-core-3.4.0.jar &&
     wget https://repo1.maven.org/maven2/net/java/dev/jna/jna/5.4.0/jna-5.4.0.jar
@@ -293,8 +300,8 @@ prometheus:
       prometheus: kube-prometheus
 
 zookeeper:
-  enabled: false
-  replicaCount: 3
+  enabled: true
+  replicaCount: 2
   env:
     ZK_HEAP_SIZE: "1G"
     ZOO_PORT: 2181

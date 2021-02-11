@@ -57,12 +57,12 @@ following configurable parameters(other parameters can be found in values.yaml):
 | Parameter                                | Description                                                                                                                                                              | Default                |
 |------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------|
 | `image.repository`                       | Flink Container image name                                                                                                                                               | `flink`                |
-| `image.tag`                              | Flink Container image tag                                                                                                                                                | `1.11.2-scala_2.12`    |
+| `image.tag`                              | Flink Container image tag                                                                                                                                                | `1.12.1-scala_2.12-java11`    |
 | `image.PullPolicy`                       | Flink Containers pull policy                                                                                                                                             | `IfNotPresent`         |
 | `flink.monitoring.enabled`               | Enables Flink monitoring                                                                                                                                                 | `true`                 |
-| `jobmanager.highAvailability.enabled`    | Enables Jobmanager HA mode key                                                                                                                                           | `false`                |
+| `jobmanager.highAvailability.enabled`    | Enables Jobmanager HA mode key                                                                                                                                           | `true`                |
 | `jobmanager.highAvailability.storageDir` | storageDir for Jobmanager in HA mode                                                                                                                                     | `null`                 |
-| `jobmanager.replicaCount`                | Jobmanagers count context                                                                                                                                                | `1`                    |
+| `jobmanager.replicaCount`                | Jobmanagers count context                                                                                                                                                | `3`                    |
 | `jobmanager.heapSize`                    | Jobmanager HeapSize options                                                                                                                                              | `1g`                   |
 | `jobmanager.resources`                   | Jobmanager resources                                                                                                                                                     | `{}`                   |
 | `taskmanager.resources`                  | Taskmanager Resources key                                                                                                                                                | `{}`                   |
@@ -70,7 +70,7 @@ following configurable parameters(other parameters can be found in values.yaml):
 | `jobmanager.replicaCount`                | Taskmanager count context                                                                                                                                                | `1`                    |
 | `taskmanager.numberOfTaskSlots`          | Number of Taskmanager taskSlots resources                                                                                                                                | `1`                    |
 | `taskmanager.resources`                  | Taskmanager resources                                                                                                                                                    | `{}`                   |
-| `zookeeper.enabled`                      | If True, installs Zookeeper Chart                                                                                                                                        | `false`                |
+| `zookeeper.enabled`                      | If True, installs Zookeeper Chart                                                                                                                                        | `true`                |
 | `zookeeper.resources`                    | Zookeeper resource requests and limits                                                                                                                                   | `{}`                   |
 | `zookeeper.env`                          | Environmental variables provided to Zookeeper Zookeeper                                                                                                                  | `{ZK_HEAP_SIZE: "1G"}` |
 | `zookeeper.storage`                      | Zookeeper Persistent volume size                                                                                                                                         | `2Gi`                  |
@@ -85,8 +85,14 @@ following configurable parameters(other parameters can be found in values.yaml):
 
 You can install this chart with enabled HA based on Zookeeper by provided follow parameters:
 ```
-$ helm install --name my-flink riskfoucs/flink --set \
-zookeeper.enabled=true,jobmanager.replicaCount=2,jobmanager.highAvailability.enabled=true,jobmanager.highAvailability.storageDir=s3://MY_BUCKET/flink/jobmanager
+$ helm install --name my-flink riskfoucs/flink --set jobmanager.highAvailability.storageDir=s3p://<s3_bucket>/,state.checkpoints.dir=s3p://<s3_bucket>/flink_state/checkpoints,state.savepoints.dir=s3p://<s3_bucket>/flink_state/savepoints
 ```
 * storageDir can be different for your installation, see 
   https://ci.apache.org/projects/flink/flink-docs-stable/ops/config.html#high-availability-storagedir
+
+
+
+
+
+
+--set jobmanager.highAvailability.storageDir=s3p://rf-flink-cluster-us-e-destination-s3/flink_state/recovery,state.checkpoints.dir=s3p://rf-flink-cluster-us-e-destination-s3/flink_state/checkpoints,state.savepoints.dir=s3p://rf-flink-cluster-us-e-destination-s3/flink_state/savepoints
