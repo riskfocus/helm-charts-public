@@ -44,7 +44,9 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-      serviceAccount: {{ include "jobmanager.serviceAccount" . }}
+      serviceAccountName: {{ include "jobmanager.serviceAccount" . }}
+      securityContext:
+        {{ toYaml .Values.securityContext | indent 8 }}
       initContainers:
       {{- range $ct, $params := .Values.jobmanager.initContainers }}
         - name: {{ $ct }}

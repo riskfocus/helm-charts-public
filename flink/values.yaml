@@ -11,6 +11,14 @@ image:
   pullPolicy: IfNotPresent
 imagePullSecrets: []
 
+# Pod Security Context
+# ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+securityContext: {}
+# securityContext:
+#   fsGroup: 1000
+#   runAsUser: 1000
+#   runAsNonRoot: true
+
 # For general configuration
 flink:
   # logging, log4j configuration copied from Flink distribution
