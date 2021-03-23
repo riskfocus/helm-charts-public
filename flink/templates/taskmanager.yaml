@@ -44,7 +44,9 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-      serviceAccount: {{ include "taskmanager.serviceAccount" . }}
+      serviceAccountName: {{ include "taskmanager.serviceAccount" . }}
+      securityContext:
+        {{ toYaml .Values.securityContext | indent 8 }}
       initContainers:
       {{- range $ct, $params := .Values.taskmanager.initContainers }}
         - name: {{ $ct }}
