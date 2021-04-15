@@ -14,6 +14,12 @@ If you are interested in supporting session/job clusters: https://github.com/Goo
 * Requires at least `v2.0.0-beta.1` version of helm to support
   dependency management with requirements.yaml
 
+If Zookeeper is installed by this chart then the follow pre-requisites apply:
+
+* Kubernetes 1.12+
+
+* Helm 3.1.0  
+
 ## StatefulSet Details
 
 * https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/
@@ -72,11 +78,10 @@ following configurable parameters(other parameters can be found in values.yaml):
 | `taskmanager.resources`                  | Taskmanager resources                                                                                                                                                    | `{}`                   |
 | `zookeeper.enabled`                      | If True, installs Zookeeper Chart                                                                                                                                        | `false`                |
 | `zookeeper.resources`                    | Zookeeper resource requests and limits                                                                                                                                   | `{}`                   |
-| `zookeeper.env`                          | Environmental variables provided to Zookeeper Zookeeper                                                                                                                  | `{ZK_HEAP_SIZE: "1G"}` |
-| `zookeeper.storage`                      | Zookeeper Persistent volume size                                                                                                                                         | `2Gi`                  |
-| `zookeeper.image.PullPolicy`             | Zookeeper Container pull policy                                                                                                                                          | `IfNotPresent`         |
-| `zookeeper.url`                          | URL of Zookeeper Cluster (unneeded if installing Zookeeper Chart)                                                                                                        | `""`                   |
-| `zookeeper.port`                         | Port of Zookeeper Cluster                                                                                                                                                | `2181`                 |
+| `zookeeper.heapSize`                     | Zookeeper heap size                                                                                                                                                      | `1024`                 |
+| `zookeeper.service.port`                 | Zookeeper port number                                                                                                                                                    | `2181`               |      
+| `zookeeper.persistence.size`             | Zookeeper Persistent volume size                                                                                                                                         | `8Gi`                  |
+| `zookeeper.image.pullPolicy`             | Zookeeper Container pull policy                                                                                                                                          | `IfNotPresent`         |
 | `zookeeper.affinity`                     | Defines affinities and anti-affinities for pods as defined in: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity preferences | `{}`                   |
 | `zookeeper.nodeSelector`                 | Node labels for pod assignment                                                                                                                                           | `{}`                   |
 | `secrets.bitnamiSealedSecrets.enabled`   | Enables creation of [Sealed Secrets](https://github.com/bitnami-labs/sealed-secrets)                                                                                     | `false`                |

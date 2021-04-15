@@ -130,7 +130,7 @@ jobmanager:
   highAvailability:
     # enabled also will enable zookeeper Dependency
     enabled: false
-    zookeeperConnect: "{{ .Release.Name }}-zookeeper:{{ .Values.zookeeper.env.ZOO_PORT }}"
+    zookeeperConnect: "{{ .Release.Name }}-zookeeper:{{ .Values.zookeeper.service.port }}"
     zookeeperRootPath: /flink
     clusterId: /flink
     # storageDir for Jobmanagers. DFS expected.
@@ -295,9 +295,9 @@ prometheus:
 zookeeper:
   enabled: false
   replicaCount: 3
-  env:
-    ZK_HEAP_SIZE: "1G"
-    ZOO_PORT: 2181
+  heapSize: 1024
+  service:
+    port: 2181
   resources:
     limits:
       cpu: 400m
